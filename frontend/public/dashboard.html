@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FittedIn</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="index.html">
+                    <h1>FittedIn</h1>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="profile.html" id="userProfile">Profile</a>
+                <a href="#" id="logoutLink">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>Welcome back, <span id="userDisplayName">User</span>! 👋</h2>
+                <p id="personalizedMessage">Track your progress and connect with your wellness community.</p>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="stats-overview" id="statsOverview" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalGoals">0</div>
+                        <div class="stat-label">Total Goals</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="completedGoals">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="profileCompletion">0%</div>
+                        <div class="stat-label">Profile Complete</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Complete Your Profile</h3>
+                    <p id="profileCompletionText">Add your bio, goals, and preferences to get the most out of FittedIn
+                    </p>
+                    <div class="profile-preview" id="profilePreview" style="display: none;">
+                        <div class="preview-item">
+                            <strong>Location:</strong> <span id="userLocation">Not set</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Fitness Level:</strong> <span id="userFitnessLevel">Not set</span>
+                        </div>
+                    </div>
+                    <a href="profile.html" class="btn-primary">Edit Profile</a>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Your Goals</h3>
+                    <p id="goalsSummaryText">Set and track your wellness goals</p>
+                    <div class="goals-preview" id="goalsPreview" style="display: none;">
+                        <div class="preview-item">
+                            <strong>Active Goals:</strong> <span id="activeGoalsCount">0</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Latest:</strong> <span id="latestGoal">None</span>
+                        </div>
+                    </div>
+                    <a href="goals.html" class="btn-primary">Manage Goals</a>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity" id="recentActivity" style="display: none;">
+                <h3>📈 Your Progress</h3>
+                <div id="activityList"></div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            line-height: 1;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color, #4CAF50);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .profile-preview,
+        .goals-preview {
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .preview-item {
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .recent-activity {
+            margin-top: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .recent-activity h3 {
+            margin-top: 0;
+            color: var(--text-color);
+        }
+
+        #activityList {
+            margin-top: 1rem;
+        }
+
+        .activity-item {
+            padding: 0.75rem;
+            border-left: 3px solid var(--primary-color);
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+    </style>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

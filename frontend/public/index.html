@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FittedIn - Health & Wellness Networking</title>
+    <meta name="description"
+        content="Connect with like-minded individuals, track your progress, and achieve your wellness goals together on FittedIn.">
+    <meta name="keywords" content="health, wellness, fitness, networking, goals, tracking, community">
+
+    <!-- Preload critical resources -->
+    <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap"
+        as="style">
+    <link rel="preload" href="css/main.css" as="style">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="FittedIn - Health & Wellness Networking">
+    <meta property="og:description"
+        content="Connect with like-minded individuals, track your progress, and achieve your wellness goals together.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fittedin.com">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FittedIn - Health & Wellness Networking">
+    <meta name="twitter:description"
+        content="Connect with like-minded individuals, track your progress, and achieve your wellness goals together.">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>FittedIn</h1>
+            </div>
+            <div class="nav-links" id="navLinks">
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#testimonials">Testimonials</a>
+                <!-- These will be replaced by auth.js based on login status -->
+                <a href="login.html" class="btn-outline">Login</a>
+                <a href="register.html" class="btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Transform Your Health Journey</h1>
+                <p class="hero-subtitle">Connect with like-minded individuals, track your progress, and achieve your
+                    wellness goals together in a supportive community.</p>
+                <div class="hero-cta">
+                    <a href="register.html" class="btn-primary btn-large">
+                        <span>Start Your Journey</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                    <a href="#features" class="btn-secondary btn-large">
+                        <span>Learn More</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 12l2 2 4-4" />
+                        </svg>
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">10K+</span>
+                        <span class="stat-label">Active Users</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">50K+</span>
+                        <span class="stat-label">Goals Achieved</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">95%</span>
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-placeholder">
+                    <div class="floating-card card-1">
+                        <div class="card-icon">📊</div>
+                        <h4>Track Progress</h4>
+                        <p>Monitor your wellness journey</p>
+                    </div>
+                    <div class="floating-card card-2">
+                        <div class="card-icon">🤝</div>
+                        <h4>Build Connections</h4>
+                        <p>Connect with like-minded people</p>
+                    </div>
+                    <div class="floating-card card-3">
+                        <div class="card-icon">🎯</div>
+                        <h4>Achieve Goals</h4>
+                        <p>Reach your wellness milestones</p>
+                    </div>
+                    <div class="hero-graphic">
+                        <svg width="400" height="400" viewBox="0 0 400 400">
+                            <defs>
+                                <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:0.8" />
+                                    <stop offset="100%" style="stop-color:#2196F3;stop-opacity:0.6" />
+                                </linearGradient>
+                                <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FF9800;stop-opacity:0.8" />
+                                    <stop offset="100%" style="stop-color:#E91E63;stop-opacity:0.6" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="200" cy="200" r="180" fill="url(#gradient1)" opacity="0.3">
+                                <animateTransform attributeName="transform" type="rotate" values="0 200 200;360 200 200"
+                                    dur="20s" repeatCount="indefinite" />
+                            </circle>
+                            <circle cx="200" cy="200" r="120" fill="url(#gradient2)" opacity="0.4">
+                                <animateTransform attributeName="transform" type="rotate" values="360 200 200;0 200 200"
+                                    dur="15s" repeatCount="indefinite" />
+                            </circle>
+                            <circle cx="200" cy="200" r="60" fill="#4CAF50" opacity="0.6">
+                                <animateTransform attributeName="transform" type="rotate" values="0 200 200;360 200 200"
+                                    dur="10s" repeatCount="indefinite" />
+                            </circle>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose FittedIn?</h2>
+            <p class="section-subtitle">Discover the features that make FittedIn the perfect platform for your wellness
+                journey</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Track Your Progress</h3>
+                    <p>Set personalized goals and monitor your achievements with intuitive charts, reports, and detailed
+                        analytics that help you stay motivated.</p>
+                    <div class="feature-highlight">
+                        <span class="highlight-text">Real-time insights</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Build Connections</h3>
+                    <p>Network with people who share similar wellness goals, find accountability partners, and motivate
+                        each other on your health journey.</p>
+                    <div class="feature-highlight">
+                        <span class="highlight-text">Community-driven</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>Log Activities</h3>
+                    <p>Record your daily exercises, meals, sleep patterns, and health metrics effortlessly with our
+                        intuitive logging system.</p>
+                    <div class="feature-highlight">
+                        <span class="highlight-text">Easy tracking</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Set Milestones</h3>
+                    <p>Break down big goals into achievable milestones, celebrate your wins, and stay motivated with our
+                        milestone tracking system.</p>
+                    <div class="feature-highlight">
+                        <span class="highlight-text">Goal-oriented</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Share Updates</h3>
+                    <p>Post your achievements, share your progress, and inspire your network with your wellness journey
+                        updates and success stories.</p>
+                    <div class="feature-highlight">
+                        <span class="highlight-text">Social sharing</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Visual Reports</h3>
+                    <p>Get automated weekly and monthly summaries of your wellness journey with beautiful,
+                        easy-to-understand visual reports.</p>
+                    <div class="feature-highlight">
+                        <span class="highlight-text">Data visualization</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <h2 class="section-title">What Our Users Say</h2>
+            <p class="section-subtitle">Join thousands of satisfied users who have transformed their health journey</p>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">"</div>
+                        <p>"FittedIn helped me find my fitness tribe! The community support and goal tracking features
+                            made all the difference in my wellness journey."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👩‍💼</div>
+                        <div class="author-info">
+                            <h4>Sarah Johnson</h4>
+                            <span>Fitness Enthusiast</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">"</div>
+                        <p>"The progress tracking and milestone features kept me motivated throughout my weight loss
+                            journey. I couldn't have done it without FittedIn!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👨‍💻</div>
+                        <div class="author-info">
+                            <h4>Mike Chen</h4>
+                            <span>Health Coach</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">"</div>
+                        <p>"The social aspect of FittedIn is amazing. I've made lifelong friends who share my passion
+                            for healthy living and wellness."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👩‍🎨</div>
+                        <div class="author-info">
+                            <h4>Emily Rodriguez</h4>
+                            <span>Yoga Instructor</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <h2 class="section-title">About FittedIn</h2>
+                <div class="about-text-container">
+                    <p class="about-text">
+                        Most health apps focus solely on data—counting steps, calories, and workouts—but they often miss
+                        the most important ingredient: <strong>community</strong>.
+                    </p>
+                    <p class="about-text">
+                        FittedIn reimagines health tracking as a social experience, inspired by professional networking
+                        platforms. We believe that wellness is better together.
+                    </p>
+                    <p class="about-text">
+                        By connecting accountability partners, sharing progress, and celebrating milestones as a
+                        community, we turn isolated efforts into collaborative journeys that lead to lasting change.
+                    </p>
+                </div>
+                <div class="about-features">
+                    <div class="about-feature">
+                        <div class="feature-number">01</div>
+                        <h4>Community First</h4>
+                        <p>Build meaningful connections with people who share your wellness goals</p>
+                    </div>
+                    <div class="about-feature">
+                        <div class="feature-number">02</div>
+                        <h4>Data Driven</h4>
+                        <p>Track your progress with detailed analytics and insights</p>
+                    </div>
+                    <div class="about-feature">
+                        <div class="feature-number">03</div>
+                        <h4>Goal Oriented</h4>
+                        <p>Set, track, and achieve your wellness milestones</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Transform Your Health Journey?</h2>
+            <p>Join our community of wellness enthusiasts and start achieving your goals today.</p>
+            <div class="cta-buttons">
+                <a href="register.html" class="btn-primary btn-large">
+                    <span>Create Free Account</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+                <a href="#features" class="btn-outline btn-large">
+                    <span>Explore Features</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4" />
+                    </svg>
+                </a>
+            </div>
+            <div class="cta-guarantee">
+                <span class="guarantee-icon">✓</span>
+                <span>Free forever • No credit card required • Join 10,000+ users</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>FittedIn</h3>
+                    <p>Health & Wellness Networking Platform</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Twitter">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Facebook">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Instagram">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M16 4a4 4 0 00-4 4v4a4 4 0 004 4h4a4 4 0 004-4V8a4 4 0 00-4-4h-4zM16 6h4a2 2 0 012 2v4a2 2 0 01-2 2h-4a2 2 0 01-2-2V8a2 2 0 012-2z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#testimonials">Testimonials</a></li>
+                        <li><a href="pricing.html">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="help.html">Help Center</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="community.html">Community</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="cookies.html">Cookie Policy</a></li>
+                        <li><a href="gdpr.html">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 FittedIn - ECE 452 Project. All rights reserved.</p>
+                <p class="footer-tagline">Made with ❤️ for the wellness community</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

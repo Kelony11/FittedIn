@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - FittedIn</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="dashboard.html">
+                    <h1>FittedIn</h1>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="#" id="logoutLink">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="profile-page">
+        <div class="container">
+            <!-- Loading State -->
+            <div class="loading-state" id="loadingState">
+                <div class="loading-spinner"></div>
+                <p>Loading your profile...</p>
+            </div>
+
+            <!-- Error/Success Messages -->
+            <div class="alert alert-error hidden" id="errorAlert"></div>
+            <div class="alert alert-success hidden" id="successAlert"></div>
+
+            <!-- Profile Content -->
+            <div class="profile-content hidden" id="profileContent">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar" id="profileAvatar">
+                            <span id="avatarInitials">U</span>
+                            <div class="avatar-upload-overlay">
+                                <button class="btn-upload" id="openAvatarUploadBtn">
+                                    <i class="icon-camera"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="profile-basic-info">
+                            <h1 id="profileName">User Name</h1>
+                            <p id="profileEmail">user@example.com</p>
+                            <p id="profileLocation">Location not set</p>
+                            <div class="profile-stats">
+                                <div class="stat-item">
+                                    <span class="stat-value" id="profileCompletion">0%</span>
+                                    <span class="stat-label">Complete</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value" id="memberSince">-</span>
+                                    <span class="stat-label">Member</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn-secondary" id="editBtn">
+                            <i class="icon-edit"></i> Edit Profile
+                        </button>
+                        <button class="btn-primary" id="shareBtn">
+                            <i class="icon-share"></i> Share
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Profile Completion Progress -->
+                <div class="completion-card">
+                    <div class="completion-header">
+                        <h3>Profile Completion</h3>
+                        <span class="completion-percentage" id="completionPercentage">0%</span>
+                    </div>
+                    <div class="completion-bar">
+                        <div class="completion-fill" id="completionFill"></div>
+                    </div>
+                    <div class="completion-tips" id="completionTips">
+                        <p>Complete your profile to increase visibility and connect with others!</p>
+                    </div>
+                </div>
+
+                <!-- Profile Tabs -->
+                <div class="profile-tabs">
+                    <button class="tab-btn active" data-tab="overview">
+                        <i class="icon-user"></i> Overview
+                    </button>
+                    <button class="tab-btn" data-tab="goals">
+                        <i class="icon-target"></i> Goals
+                    </button>
+                    <button class="tab-btn" data-tab="activity">
+                        <i class="icon-chart"></i> Activity
+                    </button>
+                    <button class="tab-btn" data-tab="settings">
+                        <i class="icon-settings"></i> Settings
+                    </button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Overview Tab -->
+                    <div class="tab-panel active" id="overviewTab">
+                        <div class="profile-sections">
+                            <!-- Basic Information -->
+                            <div class="profile-section">
+                                <div class="section-header">
+                                    <h3><i class="icon-info"></i> Basic Information</h3>
+                                    <button class="btn-edit-section" data-section="basic">
+                                        <i class="icon-edit"></i>
+                                    </button>
+                                </div>
+                                <div class="section-content">
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <label>Pronouns</label>
+                                            <span id="displayPronouns">Not specified</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Location</label>
+                                            <span id="displayLocation">Not specified</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Date of Birth</label>
+                                            <span id="displayDateOfBirth">Not specified</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Fitness Level</label>
+                                            <span id="displayFitnessLevel">Not specified</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-item full-width">
+                                        <label>Bio</label>
+                                        <p id="displayBio">No bio available</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Physical Information -->
+                            <div class="profile-section">
+                                <div class="section-header">
+                                    <h3><i class="icon-body"></i> Physical Information</h3>
+                                    <button class="btn-edit-section" data-section="physical">
+                                        <i class="icon-edit"></i>
+                                    </button>
+                                </div>
+                                <div class="section-content">
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <label>Height</label>
+                                            <span id="displayHeight">Not specified</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Weight</label>
+                                            <span id="displayWeight">Not specified</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>BMI</label>
+                                            <span id="displayBMI">Not calculated</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Skills & Expertise -->
+                            <div class="profile-section">
+                                <div class="section-header">
+                                    <h3><i class="icon-skills"></i> Skills & Expertise</h3>
+                                    <button class="btn-edit-section" data-section="skills">
+                                        <i class="icon-edit"></i>
+                                    </button>
+                                </div>
+                                <div class="section-content">
+                                    <div class="skills-container" id="displaySkills">
+                                        <p class="no-data">No skills added yet</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Goals -->
+                            <div class="profile-section">
+                                <div class="section-header">
+                                    <h3><i class="icon-target"></i> Wellness Goals</h3>
+                                    <button class="btn-edit-section" data-section="goals">
+                                        <i class="icon-edit"></i>
+                                    </button>
+                                </div>
+                                <div class="section-content">
+                                    <div class="goals-container" id="displayGoals">
+                                        <p class="no-data">No goals set yet</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Goals Tab -->
+                    <div class="tab-panel" id="goalsTab">
+                        <div class="goals-management">
+                            <div class="goals-header">
+                                <h3>Your Wellness Goals</h3>
+                                <button class="btn-primary" id="addGoalBtn">
+                                    <i class="icon-plus"></i> Add Goal
+                                </button>
+                            </div>
+                            <div class="goals-list" id="goalsList">
+                                <div class="empty-state">
+                                    <i class="icon-target"></i>
+                                    <h4>No goals yet</h4>
+                                    <p>Start your wellness journey by setting your first goal!</p>
+                                    <button class="btn-primary" id="addFirstGoalBtn">Add Your First Goal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Tab -->
+                    <div class="tab-panel" id="activityTab">
+                        <div class="activity-dashboard">
+                            <h3>Your Activity</h3>
+                            <div class="activity-stats">
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="icon-calendar"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <span class="stat-value">0</span>
+                                        <span class="stat-label">Days Active</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="icon-target"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <span class="stat-value">0</span>
+                                        <span class="stat-label">Goals Completed</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="icon-trophy"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <span class="stat-value">0</span>
+                                        <span class="stat-label">Achievements</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="activity-chart">
+                                <h4>Activity Overview</h4>
+                                <div class="chart-placeholder">
+                                    <p>Activity data will be displayed here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div class="tab-panel" id="settingsTab">
+                        <div class="settings-sections">
+                            <!-- Privacy Settings -->
+                            <div class="settings-section">
+                                <h3><i class="icon-privacy"></i> Privacy Settings</h3>
+                                <div class="settings-content">
+                                    <div class="setting-item">
+                                        <label for="profileVisibility">Profile Visibility</label>
+                                        <select id="profileVisibility">
+                                            <option value="public">Public - Anyone can see my profile</option>
+                                            <option value="connections">Connections Only</option>
+                                            <option value="private">Private - Only I can see my profile</option>
+                                        </select>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="showActivity">
+                                            <span class="checkmark"></span>
+                                            Show my activity to connections
+                                        </label>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="showGoals">
+                                            <span class="checkmark"></span>
+                                            Show my goals to connections
+                                        </label>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="showConnections">
+                                            <span class="checkmark"></span>
+                                            Show my connections
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Account Settings -->
+                            <div class="settings-section">
+                                <h3><i class="icon-account"></i> Account Settings</h3>
+                                <div class="settings-content">
+                                    <div class="setting-item">
+                                        <label>Email Notifications</label>
+                                        <div class="toggle-switch">
+                                            <input type="checkbox" id="emailNotifications" checked>
+                                            <span class="slider"></span>
+                                        </div>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label>Weekly Progress Reports</label>
+                                        <div class="toggle-switch">
+                                            <input type="checkbox" id="weeklyReports" checked>
+                                            <span class="slider"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Danger Zone -->
+                            <div class="settings-section danger-zone">
+                                <h3><i class="icon-warning"></i> Danger Zone</h3>
+                                <div class="settings-content">
+                                    <div class="setting-item">
+                                        <button class="btn-danger" id="deleteAccountBtn">
+                                            <i class="icon-trash"></i> Delete Account
+                                        </button>
+                                        <p class="setting-description">
+                                            This action cannot be undone. All your data will be permanently deleted.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Edit Profile</h3>
+                <button class="btn-close" id="closeEditModalBtn">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <!-- Dynamic form content will be inserted here -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelEditModalBtn">Cancel</button>
+                <button class="btn-primary" id="saveProfileChangesBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar Upload Modal -->
+    <div class="modal" id="avatarModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Avatar</h3>
+                <button class="btn-close" id="closeAvatarModalBtn">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="avatar-upload-area">
+                    <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                    <div class="upload-preview" id="uploadPreview">
+                        <div class="upload-placeholder">
+                            <i class="icon-camera"></i>
+                            <p>Click to upload avatar</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary" id="chooseAvatarFileBtn">
+                        Choose File
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelAvatarModalBtn">Cancel</button>
+                <button class="btn-primary" id="uploadAvatarBtn">Update Avatar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+
+</html>

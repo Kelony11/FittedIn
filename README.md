@@ -2,11 +2,11 @@
 
 > **ECE 452 Software Engineering Project**  
 > Group 1: Chih-hung Chen, Haoyang Guo, Alaric Li, Yixiao Xiao, Adam Ashby, Carlos Ortiz, Kelvin Ihezue  
-> Semester: Fall 2025  
+> Semester: Fall 2025
 
 ---
 
-## 1. Introduction
+## 📖 Overview
 
 Most health applications are **data-driven** — they count steps, calories, or workouts — but often fail to create a **sense of community**. As a result, users start with enthusiasm but quickly lose motivation.
 
@@ -14,187 +14,273 @@ Most health applications are **data-driven** — they count steps, calories, or 
 
 ---
 
-## 2. Objectives
+## ✨ Features (Current Implementation)
 
-- Provide a **central platform** where users can set health goals, track progress, and share updates.  
-- Enable **professional-style networking** (connections, endorsements, digital business cards) around wellness.  
-- Deliver **visual progress reports** that are easy to interpret and motivating.  
-- Build the system with a **clear, maintainable architecture** that supports future scaling.  
+### 🔐 Authentication System
+- **Secure Registration**: JWT-based user registration with password validation
+- **Login System**: Email/password authentication with bcrypt password hashing
+- **Protected Routes**: JWT middleware for securing API endpoints
+- **User Profiles**: Basic user profile management
 
----
-
-## 3. Features (MVP)
-
-### 3.1 User Profiles & Goals
-- Create and edit personal profiles.  
-- Define health-related goals (e.g., "Run 5 km," "Lose 10 lbs").  
-- Track progress with milestone celebrations.  
-
-### 3.2 Activity Logging
-- Record daily activities (exercise, meals, metrics).  
-- Store logs in a structured format linked to goals.  
-
-### 3.3 Networking & Connections
-- Find users with similar goals.  
-- Request/accept connections.  
-- Exchange **digital business cards** with skills or expertise.  
-
-### 3.4 Identity & Sharing
-- Post health updates and achievements.  
-- Like and comment on others' posts.  
-
-### 3.5 Visualization & Reports
-- Auto-generate weekly/monthly charts.  
-- Personalized summaries (e.g., "You improved 15% this month").  
+### 🎯 Core Features (Planned)
+- **Goal Tracking**: Set and monitor personal wellness goals
+- **Activity Logging**: Record daily activities and progress
+- **Social Networking**: Connect with friends and accountability partners
+- **Progress Sharing**: Share achievements and milestones
+- **Community Support**: Get motivated by others' journeys
 
 ---
 
-## 4. Technology Stack
+## 🚀 Quick Start Guide
 
-We keep the stack **minimal but effective**, focusing on proven, widely adopted tools.
+### Prerequisites
+- **Node.js** v20 or higher
+- **Docker** (for PostgreSQL)
+- **Git**
 
-### 4.1 Frontend
-- **Next.js (React + TypeScript)** — page-based routing, hybrid SSR/SSG, and strong developer experience.  
-- **Tailwind CSS** — utility-first styling, responsive design.  
+### One-Command Setup
+```bash
+# Clone the repository
+git clone <repository-url>
+cd FittedIn
 
-### 4.2 Backend
-- **Node.js (v20+) + Fastify** — fast, modern REST API with schema validation.  
-- **Zod** — input/output schema validation, shared with frontend.  
-
-### 4.3 Database
-- **PostgreSQL** — relational database, reliable and widely supported.  
-- **Prisma ORM** — type-safe query builder, schema migrations, seeding.  
-
-### 4.4 Infrastructure
-- **Docker + Docker Compose** — unified local dev environment.  
-- **Vercel** — optimized hosting for Next.js frontend.  
-- **Fly.io (or Railway)** — lightweight hosting for backend + database.  
-- **GitHub Actions** — automated linting, tests, and deployments.  
-- **Sentry** — error monitoring and alerting.  
-
----
-
-## 5. System Architecture
-
-### 5.1 High-Level Overview
-
-```
-[ User Browser ]
-      |
-      v
-[ Frontend: Next.js + Tailwind ]
-      |
-   REST API calls
-      |
-      v
-[ Backend: Fastify + Node.js ]
-      |
-      v
-[ PostgreSQL via Prisma ORM ]
+# Run the automated setup script
+./setup.sh
 ```
 
-### 5.2 Key Design Principles
-- **Separation of concerns** — UI, API, and database responsibilities are clearly split.  
-- **Schema-driven development** — Zod schemas define contracts between client and server.  
-- **Simplicity first** — minimize external dependencies, keep architecture easy to reason about.  
-- **Extensibility** — modules (auth, users, goals, activity, reports) can grow independently.  
+### Manual Setup (if automated setup fails)
 
----
-
-## 6. Project Structure
-
+#### 1. Start Database
+```bash
+# Start PostgreSQL with Docker
+docker-compose up -d postgres
 ```
-/fittedin
-  /frontend
-    /app               # Next.js routes
-    /components        # UI components
-    /styles            # Tailwind setup
-    /lib               # client utilities
-  
-  /backend
-    /src
-      /modules         # features: auth, users, goals, activity
-    /db                # Prisma schema + migrations
-    package.json
-  
-  /infra
-    docker-compose.yml # Local services (backend + PostgreSQL)
-    .github/workflows  # CI/CD pipelines
-  
-  README.md
+
+#### 2. Backend Setup
+```bash
+cd backend
+npm install
+npx sequelize-cli db:migrate
+```
+
+#### 3. Frontend Setup
+```bash
+cd frontend
+npm install
+```
+
+### 🏃‍♂️ Running the Application
+
+#### Option A: Backend Only (Recommended)
+```bash
+cd backend
+node server.js
+```
+**Access at:** `http://localhost:3000`
+
+#### Option B: Separate Frontend/Backend
+```bash
+# Terminal 1 - Backend
+cd backend && node server.js
+
+# Terminal 2 - Frontend
+cd frontend && npx http-server public -p 8080
 ```
 
 ---
 
-## 7. Data Model (MVP)
+## 🧪 Testing the Login System
 
-- **User**: `id, email, password_hash, display_name, avatar_url, created_at`  
-- **Profile**: `user_id, pronouns, bio, location`  
-- **Goal**: `id, user_id, title, target_value, unit, due_date`  
-- **ActivityLog**: `id, user_id, goal_id, type, amount, unit, logged_at`  
-- **Connection**: `id, requester_id, addressee_id, status`  
-- **Post**: `id, user_id, content, created_at`  
-- **Report**: `id, user_id, period_start, period_end, summary_json`  
+### 1. Registration Test
+1. Go to `http://localhost:3000`
+2. Click "Get Started"
+3. Fill out the form:
+   - **Display Name:** `John Doe`
+   - **Email:** `john@example.com`
+   - **Password:** `Password123` (must have uppercase, lowercase, number)
+   - **Confirm Password:** `Password123`
+4. Check "I agree to terms"
+5. Click "Create Account"
+
+### 2. Login Test
+1. Go to `http://localhost:3000/login.html`
+2. Enter credentials:
+   - **Email:** `john@example.com`
+   - **Password:** `Password123`
+3. Click "Login"
+
+### 3. Dashboard Test
+1. After login, you'll be redirected to the main page
+2. Access `http://localhost:3000/dashboard.html` to see the user dashboard
 
 ---
 
-## 8. Development Workflow
+## 📁 Project Structure
 
-### 8.1 Local Development
+```
+FittedIn/
+├── backend/                 # Node.js backend
+│   ├── src/
+│   │   ├── routes/         # API endpoints (auth, users)
+│   │   ├── models/         # Database models (User)
+│   │   ├── middleware/     # Authentication middleware
+│   │   ├── config/         # Database configuration
+│   │   └── migrations/     # Database migrations
+│   ├── server.js           # Express server entry point
+│   └── package.json
+├── frontend/               # Static frontend
+│   ├── public/
+│   │   ├── index.html      # Landing page
+│   │   ├── login.html      # Login page
+│   │   ├── register.html   # Registration page
+│   │   ├── dashboard.html  # User dashboard
+│   │   ├── js/            # JavaScript files
+│   │   └── css/           # Stylesheets
+│   └── package.json
+├── docker-compose.yml      # PostgreSQL database
+├── setup.sh               # Automated setup script
+└── README.md
+```
+
+---
+
+## 🛠️ Technology Stack
+
+### Frontend
+- **HTML5, CSS3, Vanilla JavaScript** — no frontend frameworks
+- **Chart.js** — visualization for progress charts (planned)
+
+### Backend
+- **Node.js (v20+) + Express.js** — REST API endpoints
+- **Sequelize ORM + PostgreSQL** — SQL database, schema migrations
+- **JWT Authentication** — secure authentication
+- **bcrypt** — password hashing
+- **Helmet, CORS, Rate Limiting** — security middleware
+
+### Development Tools
+- **Docker + Docker Compose** — PostgreSQL database
+- **Sequelize CLI** — database migrations
+- **cURL / Postman** — API testing
+
+---
+
+## 🔧 Development Commands
 
 ```bash
-# Start database
-docker compose up -d
-
-# Run migrations
+# Backend
 cd backend
-npx prisma migrate dev
+node server.js          # Start server
+npm run dev             # Start with nodemon (if installed)
 
-# Start backend
-npm run dev
+# Database
+npx sequelize-cli db:migrate        # Run migrations
+npx sequelize-cli db:migrate:undo   # Rollback migration
+docker-compose ps                   # Check database status
+docker-compose logs postgres        # View database logs
 
-# Start frontend
-cd ../frontend
-npm run dev
+# Frontend
+cd frontend
+npx http-server public -p 8080      # Serve frontend files
 ```
 
-### 8.2 Git Workflow
+---
 
-Feature branches → Pull Requests → Review → Merge to main.
+## 🐛 Troubleshooting
 
-CI checks: lint, type-check, tests.
+### Database Connection Issues
+```bash
+# Check if PostgreSQL is running
+docker-compose ps
+
+# Restart database
+docker-compose restart postgres
+
+# View database logs
+docker-compose logs postgres
+```
+
+### Port Already in Use
+```bash
+# Find process using port 3000
+lsof -i :3000
+
+# Kill the process
+kill -9 <PID>
+```
+
+### Migration Issues
+```bash
+# Reset database
+npx sequelize-cli db:migrate:undo:all
+npx sequelize-cli db:migrate
+```
+
+### Server Won't Start
+```bash
+# Check if you're in the right directory
+cd /Users/andrew/projects/FittedIn/backend
+
+# Install dependencies
+npm install
+
+# Start server
+node server.js
+```
 
 ---
 
-## 9. Milestones
+## 📚 Documentation
 
-- **Sep 30** — Proposal Presentation: scope, MVP, tech stack, timeline.
-- **Oct 31** — Midterm Presentation: prototype with profiles, auth, connections.
-- **Dec 5–9** — Final Presentations: feature-complete MVP.
-- **Dec 9** — Final Report: testing, deployment, documentation.
+### Setup & Development
+- [DEVELOPMENT.md](DEVELOPMENT.md) - Detailed development setup and workflow
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture and design decisions
+- [QUICKSTART.md](QUICKSTART.md) - Quick start guide
 
----
+### Midterm Presentation
+- [MIDTERM_PRESENTATION_CHECKLIST.md](MIDTERM_PRESENTATION_CHECKLIST.md) - Complete preparation checklist for midterm presentation
+- [MIDTERM_SUMMARY.md](MIDTERM_SUMMARY.md) - Summary of completed features and demo flow
 
-## 10. Team Roles （Temporary）
-
-- **Project Manager & Backend Lead** — Chih-hung Chen
-- **Backend Developer** — Haoyang Guo
-- **Frontend Developers** — Alaric Li, Yixiao Xiao
-- **Data & Reporting** — Adam Ashby
-- **QA & Testing** — Carlos Ortiz
-- **Deployment & DevOps** — Kelvin Ihezue
+### Feature Documentation
+- [DASHBOARD_IMPROVEMENTS.md](DASHBOARD_IMPROVEMENTS.md) - Dashboard personalization features documentation
+- [ARCHITECTURE_IMPROVEMENT.md](ARCHITECTURE_IMPROVEMENT.md) - Architecture improvements and decisions
+- [PROFILE_DEMO.md](PROFILE_DEMO.md) - Profile system demo guide
 
 ---
 
-## 11. Future Work
+## 🤝 Contributing
 
-- Group challenges and leaderboards.
-- Integration with wearable devices (Apple Health, Google Fit).
-- Recommendation engine for partners, groups, or mentors.
-- Mobile app (React Native).
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
-## 12. License
+## 📄 License
 
-MIT — educational project.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🆘 Support
+
+If you encounter any issues:
+
+1. Check the [Troubleshooting](#-troubleshooting) section
+2. Review the logs: `docker-compose logs postgres`
+3. Ensure all prerequisites are installed
+4. Try running the setup script again: `./setup.sh`
+5. Check that you're in the correct directory when running commands
+
+---
+
+## 🎯 Next Steps
+
+Once the basic authentication is working, the team can work on:
+
+1. **Goal Management**: Create, update, and track user goals
+2. **Activity Logging**: Record daily activities and progress
+3. **Social Features**: User connections and networking
+4. **Progress Visualization**: Charts and reports
+5. **Mobile Responsiveness**: Improve UI for mobile devices

@@ -28,13 +28,13 @@ echo "✅ Prerequisites check passed"
 echo "   Node.js: $(node --version)"
 echo "   Docker: $(docker --version)"
 
-# Start PostgreSQL with Docker
+# Start PostgreSQL and pgAdmin with Docker
 echo ""
-echo "🐘 Starting PostgreSQL database..."
-if docker-compose up -d postgres; then
-    echo "✅ PostgreSQL started successfully"
+echo "🐘 Starting PostgreSQL database and pgAdmin..."
+if docker-compose up -d; then
+    echo "✅ PostgreSQL and pgAdmin started successfully"
 else
-    echo "❌ Failed to start PostgreSQL. Make sure Docker is running."
+    echo "❌ Failed to start services. Make sure Docker is running."
     echo "   Try: open -a Docker"
     exit 1
 fi
@@ -103,7 +103,12 @@ echo "🚀 To start the application:"
 echo "   cd backend && node server.js"
 echo ""
 echo "🌐 Then open your browser to:"
-echo "   http://localhost:3000"
+echo "   http://localhost:3000 - Main application"
+echo "   http://localhost:5050 - pgAdmin (Database management)"
+echo ""
+echo "🔑 pgAdmin credentials:"
+echo "   Email: admin@fittedin.com"
+echo "   Password: admin123"
 echo ""
 echo "📚 For more information:"
 echo "   - README.md - Project overview"
@@ -113,6 +118,6 @@ echo ""
 echo "🆘 If you encounter issues:"
 echo "   - Check Docker is running: docker-compose ps"
 echo "   - View logs: docker-compose logs postgres"
-echo "   - Restart database: docker-compose restart postgres"
+echo "   - Restart services: docker-compose restart"
 echo ""
 echo "Happy coding! 🚀"

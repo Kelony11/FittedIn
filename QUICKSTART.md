@@ -42,6 +42,13 @@ Open your browser and go to: **`http://localhost:3000`**
 
 You should see the FittedIn landing page! 🎉
 
+### Step 4: Access Database Management (Optional)
+Open **`http://localhost:5050`** for pgAdmin:
+- Email: `admin@fittedin.com`
+- Password: `admin123`
+
+This gives you a web interface to browse your database tables and data.
+
 ---
 
 ## 🧪 Quick Test (2 minutes)

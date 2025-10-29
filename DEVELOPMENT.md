@@ -44,6 +44,7 @@ cd FittedIn
 
 This script will:
 - Start PostgreSQL with Docker
+- Start pgAdmin for database management
 - Install backend dependencies
 - Run database migrations
 - Install frontend dependencies
@@ -53,11 +54,47 @@ This script will:
 #### Database Setup
 
 ```bash
-# Start PostgreSQL container
-docker-compose up -d postgres
+# Start PostgreSQL and pgAdmin containers
+docker-compose up -d
 
-# Verify PostgreSQL is running
+# Verify services are running
 docker-compose ps
+```
+
+#### Database Management with pgAdmin
+
+pgAdmin provides a web-based interface for managing your PostgreSQL database:
+
+**Access pgAdmin:**
+- URL: `http://localhost:5050`
+- Email: `admin@fittedin.com`
+- Password: `admin123`
+
+**Connect to Database:**
+1. Right-click "Servers" → "Create" → "Server"
+2. General tab:
+   - Name: `FittedIn Development`
+3. Connection tab:
+   - Host: `postgres` (Docker service name)
+   - Port: `5432`
+   - Database: `fittedin_dev`
+   - Username: `postgres`
+   - Password: `postgres`
+4. Click "Save"
+
+**Useful pgAdmin Features:**
+- Browse tables and data
+- Execute SQL queries
+- View table structures and relationships
+- Monitor database performance
+- Import/export data
+
+For detailed pgAdmin usage instructions, see [DATABASE_MANAGEMENT.md](DATABASE_MANAGEMENT.md).
+
+**Test pgAdmin Setup:**
+```bash
+# Run the pgAdmin test script
+./test-pgadmin.sh
 ```
 
 #### Backend Setup

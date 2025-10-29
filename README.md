@@ -52,8 +52,8 @@ cd FittedIn
 
 #### 1. Start Database
 ```bash
-# Start PostgreSQL with Docker
-docker-compose up -d postgres
+# Start PostgreSQL and pgAdmin with Docker
+docker-compose up -d
 ```
 
 #### 2. Backend Setup
@@ -76,7 +76,11 @@ npm install
 cd backend
 node server.js
 ```
-**Access at:** `http://localhost:3000`
+**Access at:** 
+- `http://localhost:3000` - Main application
+- `http://localhost:5050` - pgAdmin (Database management)
+  - Email: `admin@fittedin.com`
+  - Password: `admin123`
 
 #### Option B: Separate Frontend/Backend
 ```bash
@@ -244,6 +248,7 @@ node server.js
 - [DASHBOARD_IMPROVEMENTS.md](DASHBOARD_IMPROVEMENTS.md) - Dashboard personalization features documentation
 - [ARCHITECTURE_IMPROVEMENT.md](ARCHITECTURE_IMPROVEMENT.md) - Architecture improvements and decisions
 - [PROFILE_DEMO.md](PROFILE_DEMO.md) - Profile system demo guide
+- [DATABASE_MANAGEMENT.md](DATABASE_MANAGEMENT.md) - pgAdmin usage guide
 
 ---
 

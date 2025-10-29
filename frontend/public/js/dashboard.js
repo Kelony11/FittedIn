@@ -251,7 +251,7 @@ function capitalizeFirst(str) {
 
 // ===== Community Features (Mock Data) =====
 
-// Mock data for activity feed
+// Mock data for activity feed (made available globally for posts module)
 function getMockActivityFeed() {
     return [
         {
@@ -495,7 +495,13 @@ function loadCommunityData() {
     try {
         // Simulate loading delay
         setTimeout(() => {
-            renderActivityFeed();
+            // Initialize posts module (will handle rendering posts and activities)
+            if (window.postsModule && typeof window.postsModule.initialize === 'function') {
+                window.postsModule.initialize();
+            } else {
+                // Fallback to old activity feed if posts module not available
+                renderActivityFeed();
+            }
             renderConnectionSuggestions();
             renderConnections();
         }, 800);
@@ -535,6 +541,9 @@ function setupSearchBox() {
         });
     }
 }
+
+// Make getMockActivityFeed globally accessible for posts module
+window.getMockActivityFeed = getMockActivityFeed;
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', async () => {

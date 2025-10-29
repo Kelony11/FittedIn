@@ -170,5 +170,33 @@ const api = {
             method: 'PATCH',
             body: JSON.stringify(progressData)
         })
+    },
+
+    // Post endpoints (ready for future backend integration)
+    posts: {
+        getAll: (params = {}) => {
+            const queryString = new URLSearchParams(params).toString();
+            return api.request(`/posts${queryString ? '?' + queryString : ''}`);
+        },
+        getById: (postId) => api.request(`/posts/${postId}`),
+        create: (postData) => api.request('/posts', {
+            method: 'POST',
+            body: JSON.stringify(postData)
+        }),
+        update: (postId, data) => api.request(`/posts/${postId}`, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        }),
+        delete: (postId) => api.request(`/posts/${postId}`, { method: 'DELETE' }),
+        like: (postId) => api.request(`/posts/${postId}/like`, {
+            method: 'POST'
+        }),
+        unlike: (postId) => api.request(`/posts/${postId}/like`, {
+            method: 'DELETE'
+        }),
+        comment: (postId, commentData) => api.request(`/posts/${postId}/comment`, {
+            method: 'POST',
+            body: JSON.stringify(commentData)
+        })
     }
 };

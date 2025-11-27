@@ -126,6 +126,23 @@ jobs:
             echo "🔐 Setting permissions..."
             sudo chown -R $USER:$USER /var/www/fittedin || true
             
+            # Check and install Node.js if not present
+            echo "🔍 Checking Node.js installation..."
+            if ! command -v node &> /dev/null; then
+              echo "📦 Node.js not found, installing Node.js 20.x..."
+              curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+              sudo apt-get install -y nodejs
+              echo "✅ Node.js installed: $(node --version)"
+            else
+              echo "✅ Node.js already installed: $(node --version)"
+            fi
+            
+            if ! command -v npm &> /dev/null; then
+              echo "❌ npm not found even after Node.js installation"
+              exit 1
+            fi
+            echo "✅ npm version: $(npm --version)"
+            
             # Install backend dependencies
             echo "📦 Installing backend dependencies..."
             cd backend

@@ -169,22 +169,48 @@ jobs:
             # Restart application with PM2
             echo "🔄 Restarting application..."
             if command -v pm2 &> /dev/null; then
-              # Stop existing instance if running
-              pm2 stop fittedin-backend 2>/dev/null || true
-              pm2 delete fittedin-backend 2>/dev/null || true
+              # Stop and delete all existing instances
+              pm2 stop all 2>/dev/null || true
+              pm2 delete all 2>/dev/null || true
               
-              # Start with ecosystem config
-              echo "Starting PM2 with ecosystem.config.js from $(pwd)"
-              pm2 start ecosystem.config.js --env production
+              # Start main application first (critical)
+              echo "Starting main application (fittedin-backend)..."
+              pm2 start ecosystem.config.js --only fittedin-backend --env production || {
+                echo "❌ Failed to start main application"
+                exit 1
+              }
+              
+              # Start content generator if script exists (optional)
+              if [ -f "scripts/generateDynamicContent.js" ]; then
+                echo "Starting content generator (optional)..."
+                pm2 start ecosystem.config.js --only fittedin-content-generator --env production || {
+                  echo "⚠️ Content generator failed to start, but continuing..."
+                }
+              else
+                echo "⚠️ Content generator script not found, skipping..."
+              fi
+              
               pm2 save
             else
               echo "⚠️ PM2 not installed, installing..."
               sudo npm install -g pm2
-              pm2 start ecosystem.config.js --env production
+              
+              # Start main application
+              pm2 start ecosystem.config.js --only fittedin-backend --env production || {
+                echo "❌ Failed to start main application"
+                exit 1
+              }
+              
+              # Start content generator if exists
+              if [ -f "scripts/generateDynamicContent.js" ]; then
+                pm2 start ecosystem.config.js --only fittedin-content-generator --env production || true
+              fi
+              
               pm2 save
             fi
             
             # Show PM2 status
+            echo "📊 PM2 Status:"
             pm2 status
             
             # Reload Nginx

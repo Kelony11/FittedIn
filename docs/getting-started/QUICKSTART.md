@@ -37,12 +37,30 @@ cd backend
 node server.js
 ```
 
-### Step 3: Test It Works
+### Step 3: Seed Database with Fake Data (Optional)
+```bash
+# Navigate to backend directory
+cd backend
+
+# Seed database with fake data
+npm run db:seed:faker
+```
+
+This will create:
+- 50 users with profiles (password: `Password123!`)
+- Goals, posts, connections, and activities
+- Realistic fitness and wellness data
+
+**Note:** All seeded users have the same password: `Password123!`
+
+### Step 4: Test It Works
 Open your browser and go to: **`http://localhost:3000`**
 
 You should see the FittedIn landing page! 🎉
 
-### Step 4: Access Database Management (Optional)
+You can now login with any seeded user's email and password `Password123!` to see fake data in the dashboard.
+
+### Step 5: Access Database Management (Optional)
 Open **`http://localhost:5050`** for pgAdmin:
 - Email: `admin@fittedin.com`
 - Password: `admin123`
@@ -69,6 +87,17 @@ This gives you a web interface to browse your database tables and data.
 3. Click **"Login"**
 
 **Success!** You should be redirected to the main page.
+
+### Test with Seeded Data
+If you ran the seeding script, you can login with any seeded user:
+- Use any email from the seeded users (check pgAdmin or use: `user1@example.com`, `user2@example.com`, etc.)
+- Password: `Password123!`
+
+After login, you'll see:
+- Your profile information
+- Goals with progress tracking
+- Posts and activities in the feed
+- Connections and pending requests
 
 ---
 

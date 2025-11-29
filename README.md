@@ -4,8 +4,9 @@
 > Group 1: Chih-hung Chen, Haoyang Guo, Alaric Li, Yixiao Xiao, Adam Ashby, Carlos Ortiz, Kelvin Ihezue  
 > Semester: Fall 2025
 
-[![Test](https://github.com/zhihungchen/FittedIn/actions/workflows/test.yml/badge.svg)](https://github.com/zhihungchen/FittedIn/actions/workflows/test.yml)
-[![Deploy](https://github.com/zhihungchen/FittedIn/actions/workflows/deploy.yml/badge.svg)](https://github.com/zhihungchen/FittedIn/actions/workflows/deploy.yml)
+<!-- GitHub Actions workflows are currently disabled - using manual deployment with setup.sh -->
+<!-- [![Test](https://github.com/zhihungchen/FittedIn/actions/workflows/test.yml/badge.svg)](https://github.com/zhihungchen/FittedIn/actions/workflows/test.yml) -->
+<!-- [![Deploy](https://github.com/zhihungchen/FittedIn/actions/workflows/deploy.yml/badge.svg)](https://github.com/zhihungchen/FittedIn/actions/workflows/deploy.yml) -->
 
 ---
 
@@ -87,16 +88,18 @@ node server.js
 - [Authentication](docs/features/AUTH_FIX_SUMMARY.md) - Auth system documentation
 
 ### 🚀 Deployment
-- [DevOps Guide](docs/deployment/DEVOPS_GUIDE.md) - **Complete CI/CD and DevOps documentation**
-- [GitHub Secrets Setup](docs/deployment/GITHUB_SECRETS_SETUP.md) - Configure GitHub Secrets for CI/CD
-- [CI/CD Pipeline](docs/deployment/CI_CD_PIPELINE.md) - Automated deployment with GitHub Actions
+- [Manual EC2 Deployment](docs/deployment/MANUAL_DEPLOYMENT.md) - **Deploy to EC2 using setup.sh (Current Method)**
 - [AWS EC2 Deployment Guide](docs/deployment/AWS_EC2_DEPLOYMENT.md) - Complete production deployment guide
 - [AWS RDS Setup](docs/deployment/AWS_RDS_SETUP.md) - PostgreSQL database configuration
 - [SSL Certificate Setup](docs/deployment/SSL_SETUP.md) - Let's Encrypt SSL configuration
 - [Monitoring & Alerting](docs/deployment/MONITORING_AND_ALERTING.md) - CloudWatch monitoring setup
 - [Auto Scaling](docs/deployment/AUTO_SCALING.md) - EC2 Auto Scaling configuration
+- [DevOps Guide](docs/deployment/DEVOPS_GUIDE.md) - CI/CD and DevOps documentation (GitHub Actions currently disabled)
+- [CI/CD Pipeline](docs/deployment/CI_CD_PIPELINE.md) - GitHub Actions documentation (currently disabled)
 - [Midterm Summary](docs/deployment/MIDTERM_SUMMARY.md) - Project progress summary
 - [Presentation Checklist](docs/deployment/MIDTERM_PRESENTATION_CHECKLIST.md) - Demo preparation
+
+**Note:** GitHub Actions workflows are currently **disabled**. Use `setup.sh` for manual deployment to EC2. See [Manual EC2 Deployment Guide](docs/deployment/MANUAL_DEPLOYMENT.md) for details.
 
 ---
 

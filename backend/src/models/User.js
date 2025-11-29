@@ -31,7 +31,12 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING(500),
         allowNull: true,
         validate: {
-            isUrl: true
+            isUrl(value) {
+                // 允许null或空字符串
+                if (value !== null && value !== '' && !/^https?:\/\/.+/.test(value)) {
+                    throw new Error('Avatar URL must be a valid URL');
+                }
+            }
         }
     }
 }, {
@@ -76,6 +81,54 @@ User.associate = function (models) {
     User.hasMany(models.Goal, {
         foreignKey: 'user_id',
         as: 'goals'
+    });
+
+    // User has many Connections as requester
+    User.hasMany(models.Connection, {
+        foreignKey: 'requester_id',
+        as: 'sentConnections'
+    });
+
+    // User has many Connections as receiver
+    User.hasMany(models.Connection, {
+        foreignKey: 'receiver_id',
+        as: 'receivedConnections'
+    });
+
+    // User has many Activities
+    User.hasMany(models.Activity, {
+        foreignKey: 'user_id',
+        as: 'activities'
+    });
+
+    // User has many Posts
+    User.hasMany(models.Post, {
+        foreignKey: 'user_id',
+        as: 'posts'
+    });
+
+    // User has many PostLikes
+    User.hasMany(models.PostLike, {
+        foreignKey: 'user_id',
+        as: 'postLikes'
+    });
+
+    // User has many PostComments
+    User.hasMany(models.PostComment, {
+        foreignKey: 'user_id',
+        as: 'postComments'
+    });
+
+    // User has many Notifications (as recipient)
+    User.hasMany(models.Notification, {
+        foreignKey: 'user_id',
+        as: 'notifications'
+    });
+
+    // User has many Notifications (as sender)
+    User.hasMany(models.Notification, {
+        foreignKey: 'from_user_id',
+        as: 'sentNotifications'
     });
 };
 

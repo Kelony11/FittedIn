@@ -43,6 +43,11 @@ async function loadDashboardData() {
         // Load community data (mock data)
         loadCommunityData();
 
+        // Initialize notifications module
+        if (window.notificationsModule && typeof window.notificationsModule.initialize === 'function') {
+            window.notificationsModule.initialize();
+        }
+
     } catch (error) {
         console.error('Failed to load dashboard data:', error);
         // Only clear storage and redirect if it's actually an auth error
@@ -192,7 +197,10 @@ function loadRecentActivity() {
                 recentActivity.style.display = 'block';
             }
         } catch (error) {
-            console.error('Failed to load recent activity:', error);
+            // Only log non-rate-limit errors
+            if (!error.message || !error.message.includes('Too many requests')) {
+                console.error('Failed to load recent activity:', error);
+            }
         }
     }, 500);
 }

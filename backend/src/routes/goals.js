@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 const { authenticateToken } = require('../middleware/auth');
 const Goal = require('../models/Goal');
 const User = require('../models/User');
+const activityService = require('../services/activityService');
 
 const router = express.Router();
 
@@ -140,6 +141,14 @@ router.post('/', authenticateToken, [
 
         const goal = await Goal.create(goalData);
 
+        // Log activity
+        try {
+            await activityService.logGoalCreated(userId, goal);
+        } catch (error) {
+            console.error('Failed to log goal creation activity:', error);
+            // Don't fail the request if activity logging fails
+        }
+
         res.status(201).json({
             success: true,
             message: 'Goal created successfully',
@@ -224,7 +233,16 @@ router.put('/:id', authenticateToken, [
             });
         }
 
+        const previousData = goal.toJSON();
         await goal.update(req.body);
+        await goal.reload();
+
+        // Log activity
+        try {
+            await activityService.logGoalUpdated(userId, goal, req.body);
+        } catch (error) {
+            console.error('Failed to log goal update activity:', error);
+        }
 
         res.json({
             success: true,
@@ -257,7 +275,17 @@ router.delete('/:id', authenticateToken, async (req, res) => {
             });
         }
 
+        // Store goal data for activity logging before deletion
+        const goalData = goal.toJSON();
+
         await goal.destroy();
+
+        // Log activity
+        try {
+            await activityService.logGoalDeleted(userId, goalData);
+        } catch (error) {
+            console.error('Failed to log goal deletion activity:', error);
+        }
 
         res.json({
             success: true,
@@ -308,6 +336,9 @@ router.patch('/:id/progress', authenticateToken, [
             });
         }
 
+        // Store previous value for activity logging
+        const previousValue = goal.current_value;
+
         // Update current value and notes
         await goal.update({
             current_value,
@@ -315,8 +346,24 @@ router.patch('/:id/progress', authenticateToken, [
         });
 
         // Check if goal is completed
-        if (current_value >= goal.target_value && goal.status === 'active') {
+        const wasCompleted = current_value >= goal.target_value && goal.status === 'active';
+        if (wasCompleted) {
             await goal.update({ status: 'completed' });
+            await goal.reload();
+
+            // Log goal completion
+            try {
+                await activityService.logGoalCompleted(userId, goal);
+            } catch (error) {
+                console.error('Failed to log goal completion activity:', error);
+            }
+        } else {
+            // Log progress update
+            try {
+                await activityService.logGoalProgress(userId, goal, previousValue, current_value);
+            } catch (error) {
+                console.error('Failed to log goal progress activity:', error);
+            }
         }
 
         res.json({

@@ -109,11 +109,26 @@ npm install
 # Run database migrations
 npx sequelize-cli db:migrate
 
+# Seed database with fake data (optional but recommended)
+npm run db:seed:faker
+
 # Start development server
 node server.js
 ```
 
 The backend server will start at `http://localhost:3000`.
+
+**Database Seeding:**
+The seeding script generates realistic fake data using Faker.js:
+- Users with complete profiles
+- Goals with progress tracking
+- Posts, likes, and comments
+- Connections between users
+- Activities and notifications
+
+All seeded users have password: `Password123!`
+
+For more details, see [backend/scripts/SEEDING_README.md](../../backend/scripts/SEEDING_README.md).
 
 #### Frontend Setup
 
@@ -390,6 +405,8 @@ npm run dev              # Start dev server with hot reload
 npm run lint             # Run ESLint
 npm run format           # Format code with Prettier
 npm run db:reset         # Reset database (drop + migrate + seed)
+npm run db:seed:faker    # Seed database with fake data
+npm run db:seed:clear    # Clear and reseed database
 
 # Frontend
 npx http-server public   # Serve frontend files

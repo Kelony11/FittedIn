@@ -63,7 +63,14 @@ const Goal = sequelize.define('Goal', {
     },
     target_date: {
         type: DataTypes.DATEONLY,
-        allowNull: true
+        allowNull: true,
+        validate: {
+            isAfterStartDate(value) {
+                if (value && this.start_date && new Date(value) < new Date(this.start_date)) {
+                    throw new Error('Target date must be after start date');
+                }
+            }
+        }
     },
     status: {
         type: DataTypes.ENUM('active', 'completed', 'paused', 'cancelled'),
@@ -131,6 +138,16 @@ Goal.associate = function (models) {
     Goal.belongsTo(models.User, {
         foreignKey: 'user_id',
         as: 'user'
+    });
+
+    // Goal has many Activities (when activity is related to this goal)
+    Goal.hasMany(models.Activity, {
+        foreignKey: 'related_entity_id',
+        constraints: false,
+        scope: {
+            related_entity_type: 'goal'
+        },
+        as: 'activities'
     });
 };
 

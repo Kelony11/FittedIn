@@ -109,70 +109,96 @@ function getTimeAgo(dateString) {
     return new Date(dateString).toLocaleDateString();
 }
 
-// Render a single post
+// Render a single post (Facebook-style)
 function renderPost(post) {
     const isPost = post.postType || post.content;
     const isActivity = !isPost && post.activity;
+    const userId = post.userId || post.user_id;
+    const userName = post.userName || 'Unknown User';
+    const userAvatar = post.userAvatar || userName?.slice(0, 2).toUpperCase() || 'U';
+    const timeAgo = post.timeAgo || getTimeAgo(post.createdAt);
 
     return `
-        <div class="activity-item-community ${isPost ? 'post-item' : 'activity-item'}" data-id="${post.id}" data-type="${isPost ? 'post' : 'activity'}">
-            <div class="activity-user-avatar">${post.userAvatar || post.userName?.slice(0, 2).toUpperCase() || 'U'}</div>
-            <div class="activity-content">
-                <div class="activity-header">
-                    <strong>${post.userName || 'Unknown User'}</strong>
-                    <span class="activity-time">${post.timeAgo || getTimeAgo(post.createdAt)}</span>
-                </div>
-                ${isPost ? `
-                    <div class="post-content">
-                        <div class="activity-text">${escapeHtml(post.content)}</div>
-                        ${post.imagePlaceholder ? `
-                            <div class="post-image-placeholder">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                    <polyline points="21 15 16 10 5 21"></polyline>
-                                </svg>
-                                <span>Image preview placeholder</span>
-                            </div>
-                        ` : ''}
-                        ${post.linkedGoalId ? `
-                            <div class="post-linked-goal">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                </svg>
-                                <span>Linked to goal</span>
-                            </div>
-                        ` : ''}
+        <div class="post-card ${isPost ? 'post-item' : 'activity-item'}" data-id="${post.id}" data-type="${isPost ? 'post' : 'activity'}" data-user-id="${userId}">
+            <div class="post-header">
+                <div class="post-user-info">
+                    <div class="post-avatar" data-user-id="${userId}" style="cursor: pointer;" title="View ${userName}'s profile">
+                        ${userAvatar}
                     </div>
-                ` : `
-                    <div class="activity-text">${escapeHtml(post.activity || 'No activity description')}</div>
-                `}
-                <div class="activity-actions">
-                    <button class="btn-icon ${post.isLiked ? 'liked' : ''}" data-action="like" data-id="${post.id}" title="Like">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="${post.isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                        <span class="like-count">${post.likes || 0}</span>
-                    </button>
-                    <button class="btn-icon" data-action="comment" data-id="${post.id}" title="Comment">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                        <span class="comment-count">${post.comments || 0}</span>
-                    </button>
-                    ${isPost ? `
-                        <button class="btn-icon" data-action="share" data-id="${post.id}" title="Share">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="18" cy="5" r="3"></circle>
-                                <circle cx="6" cy="12" r="3"></circle>
-                                <circle cx="18" cy="19" r="3"></circle>
-                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    <div class="post-user-details">
+                        <a href="profile.html?userId=${userId}" class="post-user-name" data-user-id="${userId}">${escapeHtml(userName)}</a>
+                        <span class="post-time">${timeAgo}</span>
+                    </div>
+                </div>
+            </div>
+            ${isPost ? `
+                <div class="post-body">
+                    <div class="post-text">${escapeHtml(post.content).replace(/\n/g, '<br>')}</div>
+                    ${post.imagePlaceholder ? `
+                        <div class="post-image-placeholder">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
                             </svg>
-                        </button>
+                            <span>Image preview placeholder</span>
+                        </div>
+                    ` : ''}
+                    ${post.linkedGoalId ? `
+                        <div class="post-linked-goal">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            <span>Linked to goal</span>
+                        </div>
                     ` : ''}
                 </div>
+            ` : `
+                <div class="post-body">
+                    <div class="activity-text">${escapeHtml(post.activity || 'No activity description')}</div>
+                </div>
+            `}
+            <div class="post-stats">
+                ${(post.likes || 0) > 0 ? `
+                    <div class="post-stat-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"></path>
+                        </svg>
+                        <span>${post.likes}</span>
+                    </div>
+                ` : ''}
+                ${(post.comments || 0) > 0 ? `
+                    <div class="post-stat-item">
+                        <span>${post.comments} comment${post.comments !== 1 ? 's' : ''}</span>
+                    </div>
+                ` : ''}
+            </div>
+            <div class="post-actions">
+                <button class="post-action-btn ${post.isLiked ? 'liked' : ''}" data-action="like" data-id="${post.id}" title="Like">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="${post.isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <span>Like</span>
+                </button>
+                <button class="post-action-btn" data-action="comment" data-id="${post.id}" title="Comment">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Comment</span>
+                </button>
+                ${isPost ? `
+                    <button class="post-action-btn" data-action="share" data-id="${post.id}" title="Share">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="18" cy="5" r="3"></circle>
+                            <circle cx="6" cy="12" r="3"></circle>
+                            <circle cx="18" cy="19" r="3"></circle>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                        </svg>
+                        <span>Share</span>
+                    </button>
+                ` : ''}
             </div>
         </div>
     `;
@@ -238,45 +264,62 @@ function attachPostEventListeners() {
             handleSharePost(postId);
         });
     });
+
+    // User name and avatar click handlers - navigate to profile
+    activityFeed.querySelectorAll('.post-user-name, .post-avatar').forEach(element => {
+        element.addEventListener('click', function (e) {
+            e.preventDefault();
+            const userId = this.dataset.userId || this.closest('[data-user-id]')?.dataset.userId;
+            if (userId) {
+                window.location.href = `profile.html?userId=${userId}`;
+            }
+        });
+    });
 }
 
 // Handle like action
-function handleLikePost(postId, buttonElement) {
-    // Find the post in our data
-    const allPosts = [...userPosts, ...getMockPosts()];
-    let post = allPosts.find(p => p.id === postId);
-
-    if (!post) {
-        // Try to find in activities
-        const activities = getMockActivityFeed();
-        post = activities.find(a => a.id === postId);
+async function handleLikePost(postId, buttonElement) {
+    // Check if it's a real post ID (not activity or mock)
+    if (postId.toString().startsWith('activity-') || postId.toString().startsWith('mock-') || postId.toString().startsWith('user-post-')) {
+        // Handle mock/activity likes locally
+        const allPosts = [...userPosts, ...getMockPosts()];
+        let post = allPosts.find(p => p.id === postId);
+        if (!post) {
+            const getActivities = window.getMockActivityFeed || (typeof getMockActivityFeed === 'function' ? getMockActivityFeed : null);
+            const activities = getActivities ? getActivities() : getMockActivityFeedFallback();
+            post = activities.find(a => a.id === postId);
+        }
+        if (post) {
+            post.isLiked = !post.isLiked;
+            post.likes = post.isLiked ? (post.likes || 0) + 1 : Math.max(0, (post.likes || 0) - 1);
+            const likeCount = buttonElement.querySelector('.like-count');
+            if (likeCount) likeCount.textContent = post.likes;
+            if (post.isLiked) {
+                buttonElement.classList.add('liked');
+                buttonElement.querySelector('svg').setAttribute('fill', 'currentColor');
+            } else {
+                buttonElement.classList.remove('liked');
+                buttonElement.querySelector('svg').setAttribute('fill', 'none');
+            }
+        }
+        return;
     }
 
-    if (post) {
-        // Toggle like status
-        post.isLiked = !post.isLiked;
-        post.likes = post.isLiked ? (post.likes || 0) + 1 : Math.max(0, (post.likes || 0) - 1);
+    // Handle real API post likes
+    try {
+        const isLiked = buttonElement.classList.contains('liked');
 
-        // Update UI
-        const likeCount = buttonElement.querySelector('.like-count');
-        if (likeCount) {
-            likeCount.textContent = post.likes;
-        }
-
-        // Update button state
-        if (post.isLiked) {
-            buttonElement.classList.add('liked');
-            buttonElement.querySelector('svg').setAttribute('fill', 'currentColor');
+        if (isLiked) {
+            await api.posts.unlike(postId);
         } else {
-            buttonElement.classList.remove('liked');
-            buttonElement.querySelector('svg').setAttribute('fill', 'none');
+            await api.posts.like(postId);
         }
 
-        // Update in userPosts if it exists there
-        const userPostIndex = userPosts.findIndex(p => p.id === postId);
-        if (userPostIndex !== -1) {
-            userPosts[userPostIndex] = post;
-        }
+        // Refresh the feed to get updated like count
+        await refreshPostsFeed();
+    } catch (error) {
+        console.error('Failed to like/unlike post:', error);
+        // Error will be shown by API client toast
     }
 }
 
@@ -389,7 +432,7 @@ function setupPostCreation() {
     }
 
     // Submit form
-    postForm.addEventListener('submit', function (e) {
+    postForm.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const content = postTextarea.value.trim();
@@ -397,48 +440,63 @@ function setupPostCreation() {
             return;
         }
 
-        // Get current user info
-        const userInfo = getCurrentUserInfo();
-
-        // Create new post
-        const newPost = {
-            id: `user-post-${nextPostId++}`,
-            userId: userInfo.userId,
-            userName: userInfo.userName,
-            userAvatar: userInfo.userAvatar,
-            content: content,
-            postType: 'text',
-            likes: 0,
-            comments: 0,
-            isLiked: false,
-            createdAt: new Date().toISOString(),
-            timeAgo: 'Just now'
-        };
-
-        // Add to user posts
-        userPosts.unshift(newPost);
-
-        // Clear form and reset height
-        postTextarea.value = '';
-        autoResizeTextarea(postTextarea);
-        if (postCharCount) {
-            postCharCount.textContent = `0/${MAX_CHARS}`;
-            postCharCount.style.color = 'var(--text-light)';
-        }
+        // Disable submit button during request
         if (postSubmitBtn) {
             postSubmitBtn.disabled = true;
+            postSubmitBtn.textContent = 'Posting...';
         }
 
-        // Re-render feed
-        refreshPostsFeed();
+        try {
+            // Create post via API
+            const response = await api.posts.create({ content });
 
-        // Show success feedback
-        const tempMsg = document.createElement('div');
-        tempMsg.className = 'temp-message';
-        tempMsg.textContent = 'Post created!';
-        tempMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: var(--success-color); color: white; padding: 1rem; border-radius: 8px; z-index: 1000;';
-        document.body.appendChild(tempMsg);
-        setTimeout(() => tempMsg.remove(), 2000);
+            // Handle response - could be { success: true, data: { post: {...} } } or { post: {...} }
+            const newPost = response.data?.post || response.post;
+
+            if (newPost) {
+                // Add to local state for immediate display
+                const userInfo = getCurrentUserInfo();
+                userPosts.unshift({
+                    id: newPost.id,
+                    userId: userInfo.userId,
+                    userName: userInfo.userName,
+                    userAvatar: userInfo.userAvatar,
+                    content: newPost.content,
+                    postType: 'text',
+                    likes: 0,
+                    comments: 0,
+                    isLiked: false,
+                    createdAt: newPost.created_at || new Date().toISOString(),
+                    timeAgo: 'Just now'
+                });
+            }
+
+            // Clear form and reset height
+            postTextarea.value = '';
+            autoResizeTextarea(postTextarea);
+            if (postCharCount) {
+                postCharCount.textContent = `0/${MAX_CHARS}`;
+                postCharCount.style.color = 'var(--text-light)';
+            }
+
+            // Re-render feed
+            await refreshPostsFeed();
+
+            // Show success feedback
+            if (window.toast) {
+                window.toast.success('Post created successfully!');
+            } else {
+                alert('Post created!');
+            }
+        } catch (error) {
+            console.error('Failed to create post:', error);
+            // Error will be shown by API client toast
+        } finally {
+            if (postSubmitBtn) {
+                postSubmitBtn.disabled = content.length < MIN_CHARS || content.length > MAX_CHARS;
+                postSubmitBtn.textContent = 'Post';
+            }
+        }
     });
 }
 
@@ -460,26 +518,105 @@ function getMockActivityFeedFallback() {
     ];
 }
 
-// Refresh posts feed (combine user posts with mock posts and activities)
-function refreshPostsFeed() {
-    const mockPosts = getMockPosts();
-    // Try to get activities from dashboard.js (via window or direct), fallback to local function
-    const getActivities = window.getMockActivityFeed || (typeof getMockActivityFeed === 'function' ? getMockActivityFeed : null);
-    const mockActivities = getActivities ? getActivities() : getMockActivityFeedFallback();
+// Refresh posts feed (load from API)
+async function refreshPostsFeed() {
+    try {
+        // Load posts from API feed
+        const feedResponse = await api.posts.getFeed({ limit: 50 });
+        // Handle both response formats: { data: { posts: [...] } } or { posts: [...] }
+        const apiPosts = feedResponse.data?.posts || feedResponse.posts || [];
 
-    // Combine user posts with mock posts
-    const allPosts = [...userPosts, ...mockPosts];
+        // Format API posts to match our render format
+        const formattedPosts = apiPosts.map(post => ({
+            id: post.id,
+            userId: post.user?.id || post.user_id,
+            userName: post.user?.display_name || 'Unknown User',
+            userAvatar: post.user?.avatar_url ? '' : (post.user?.display_name?.slice(0, 2).toUpperCase() || 'U'),
+            content: post.content,
+            postType: 'text',
+            likes: post.like_count || 0,
+            comments: post.comment_count || 0,
+            isLiked: post.is_liked || false,
+            createdAt: post.created_at,
+            timeAgo: getTimeAgo(post.created_at)
+        }));
 
-    renderPostsFeed(allPosts, mockActivities);
+        // Try to get activities from API
+        let activities = [];
+        try {
+            const activityResponse = await api.activities.getFeed({ limit: 20 });
+            // Handle both response formats
+            const apiActivities = activityResponse.data?.activities || activityResponse.activities || [];
+            activities = apiActivities.map(activity => ({
+                id: `activity-${activity.id}`,
+                userId: activity.user?.id || activity.user_id,
+                userName: activity.user?.display_name || 'Unknown User',
+                userAvatar: activity.user?.avatar_url ? '' : (activity.user?.display_name?.slice(0, 2).toUpperCase() || 'U'),
+                activity: formatActivityText(activity),
+                activityType: activity.activity_type,
+                likes: 0,
+                comments: 0,
+                createdAt: activity.created_at,
+                timeAgo: getTimeAgo(activity.created_at)
+            }));
+        } catch (error) {
+            // Only log non-rate-limit errors
+            if (!error.message || !error.message.includes('Too many requests')) {
+                console.error('Failed to load activities:', error);
+            }
+            // Fallback to mock activities if API fails
+            const getActivities = window.getMockActivityFeed || (typeof getMockActivityFeed === 'function' ? getMockActivityFeed : null);
+            activities = getActivities ? getActivities() : getMockActivityFeedFallback();
+        }
+
+        renderPostsFeed(formattedPosts, activities);
+    } catch (error) {
+        // Only log non-rate-limit errors
+        if (!error.message || !error.message.includes('Too many requests')) {
+            console.error('Failed to load posts feed:', error);
+        }
+        // Fallback to mock data if API fails
+        const mockPosts = getMockPosts();
+        const getActivities = window.getMockActivityFeed || (typeof getMockActivityFeed === 'function' ? getMockActivityFeed : null);
+        const mockActivities = getActivities ? getActivities() : getMockActivityFeedFallback();
+        renderPostsFeed([...userPosts, ...mockPosts], mockActivities);
+    }
+}
+
+// Format activity text for display
+function formatActivityText(activity) {
+    const data = activity.activity_data || {};
+    switch (activity.activity_type) {
+        case 'goal_created':
+            return `Created goal "${data.goal_title || 'New Goal'}"`;
+        case 'goal_progress':
+            return `Updated progress on "${data.goal_title || 'Goal'}" to ${data.current_value || 0} ${data.unit || ''}`;
+        case 'goal_completed':
+            return `Completed goal "${data.goal_title || 'Goal'}"! 🎉`;
+        case 'goal_updated':
+            return `Updated goal "${data.goal_title || 'Goal'}"`;
+        case 'profile_updated':
+            return 'Updated profile';
+        case 'connection_request':
+            return 'Sent a connection request';
+        case 'connection_accepted':
+            return 'Accepted a connection request';
+        default:
+            return 'New activity';
+    }
 }
 
 // Initialize posts module
 function initializePosts() {
+    console.log('[posts] Initializing posts module');
+
     // Setup post creation form
     setupPostCreation();
 
-    // Load and render initial posts
-    refreshPostsFeed();
+    // Load and render initial posts after a short delay to ensure DOM is ready
+    setTimeout(() => {
+        refreshPostsFeed();
+    }, 100);
 }
 
 // Make functions available globally for dashboard.js

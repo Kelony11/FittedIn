@@ -17,6 +17,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -33,6 +34,36 @@ services:
       postgres:
         condition: service_healthy
     restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: fittedin-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Use Docker-specific config for development
+      - ./nginx/fittedin.docker.conf:/etc/nginx/conf.d/default.conf:ro
+      # Mount frontend static files
+      - ./frontend/public:/var/www/fittedin/frontend/public:ro
+      # Logs directory
+      - ./nginx/logs:/var/log/nginx
+      # SSL certificates (if using Let's Encrypt in production)
+      # - ./nginx/ssl:/etc/letsencrypt:ro
+    depends_on:
+      - postgres
+    extra_hosts:
+      # Allow Nginx container to access host machine services
+      # On Linux (EC2), this maps to the host gateway
+      # On macOS/Windows, host.docker.internal works automatically
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    networks:
+      - fittedin-network
+
+networks:
+  fittedin-network:
+    driver: bridge
 
 volumes:
   postgres_data:

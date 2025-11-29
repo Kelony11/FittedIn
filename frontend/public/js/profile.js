@@ -6,6 +6,8 @@ class ProfileManager {
         this.currentTab = 'overview';
         this.isEditing = false;
         this.currentEditSection = null;
+        this.viewingUserId = null; // ID of the user being viewed (null = viewing own profile)
+        this.isViewingOtherUser = false; // Flag to indicate if viewing another user's profile
 
         // Initialize modular components
         this.skillsSection = null;
@@ -21,6 +23,20 @@ class ProfileManager {
         // Check authentication
         if (!this.checkAuth()) {
             return;
+        }
+
+        // Check if viewing another user's profile from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const userIdParam = urlParams.get('userId');
+        if (userIdParam) {
+            this.viewingUserId = parseInt(userIdParam);
+            this.isViewingOtherUser = true;
+            const currentUserId = parseInt(authState.getUserId());
+            // If viewing own profile via userId param, treat as own profile
+            if (this.viewingUserId === currentUserId) {
+                this.viewingUserId = null;
+                this.isViewingOtherUser = false;
+            }
         }
 
         // Initialize modular components
@@ -72,7 +88,15 @@ class ProfileManager {
         try {
             this.showLoading(true);
 
-            const response = await api.profiles.getMyProfile();
+            let response;
+            if (this.isViewingOtherUser && this.viewingUserId) {
+                // Load another user's public profile
+                console.log('Loading other user profile:', this.viewingUserId);
+                response = await api.profiles.getUserProfile(this.viewingUserId);
+            } else {
+                // Load own profile
+                response = await api.profiles.getMyProfile();
+            }
 
             // Debug: log the response structure
             console.log('Profile API Response:', response);
@@ -105,25 +129,75 @@ class ProfileManager {
             try {
                 await this.updateProfileDisplay();
                 this.calculateCompletionScore();
+                // Hide edit buttons if viewing another user's profile
+                if (this.isViewingOtherUser) {
+                    this.hideEditButtons();
+                }
             } catch (displayError) {
                 console.error('Error updating display:', displayError);
             }
         } catch (error) {
             console.error('Failed to load profile:', error);
-            this.showError(`Failed to load profile: ${error.message}`);
+
+            // Handle different error types
+            const errorMessage = error.message || 'Unknown error';
 
             // Only clear storage and redirect if it's actually an auth error
-            if (error.message && (error.message.includes('token') || error.message.includes('unauthorized'))) {
+            if (errorMessage.includes('token') || errorMessage.includes('unauthorized') || errorMessage.includes('401')) {
                 console.log('Authentication error detected, logging out');
+                this.showError('Authentication failed. Please log in again.');
                 setTimeout(() => {
                     if (window.logout) window.logout();
                 }, 3000);
+            } else if (errorMessage.includes('not found') || errorMessage.includes('404')) {
+                // For "not found" errors, show a less alarming message and create fallback
+                console.log('Profile not found, creating fallback profile');
+                const targetUserId = this.isViewingOtherUser ? this.viewingUserId : authState.getUserId();
+
+                if (targetUserId) {
+                    // Try to get user info from API to create a better fallback
+                    try {
+                        const userResponse = await api.users.getProfile(targetUserId);
+                        const user = userResponse.data?.user || userResponse.user;
+                        this.currentProfile = {
+                            user: {
+                                id: user?.id || targetUserId,
+                                email: user?.email || 'user@example.com',
+                                display_name: user?.display_name || 'User',
+                                avatar_url: user?.avatar_url || null
+                            },
+                            location: '',
+                            bio: '',
+                            pronouns: '',
+                            date_of_birth: '',
+                            fitness_level: '',
+                            height: null,
+                            weight: null,
+                            skills: [],
+                            primary_goals: [],
+                            created_at: new Date().toISOString()
+                        };
+                        await this.updateProfileDisplay();
+                        this.calculateCompletionScore();
+                        // Don't show error for fallback profile
+                        return;
+                    } catch (userError) {
+                        console.error('Failed to get user info:', userError);
+                    }
+                }
+
+                // If we can't get user info, show a friendly message
+                this.showError('Profile information is not available yet.');
             } else {
-                // For other errors, create fallback profile
-                const userId = authState.getUserId();
+                // For other errors, show the error but try to continue
+                this.showError(`Failed to load profile: ${errorMessage}`);
+
+                // Create fallback profile if we have a user ID
+                const userId = this.isViewingOtherUser ? this.viewingUserId : authState.getUserId();
                 if (userId) {
                     this.currentProfile = {
                         user: {
+                            id: userId,
                             email: 'user@example.com',
                             display_name: 'User'
                         },
@@ -230,12 +304,15 @@ class ProfileManager {
             }
 
             // Load goals for achievements and goals preview
+            // Only load own goals, not other users' goals
             let goals = [];
-            try {
-                const goalsResponse = await api.goals.getAll();
-                goals = goalsResponse.data?.goals || goalsResponse.goals || [];
-            } catch (error) {
-                console.warn('Could not load goals for achievements:', error);
+            if (!this.isViewingOtherUser) {
+                try {
+                    const goalsResponse = await api.goals.getAll();
+                    goals = goalsResponse.data?.goals || goalsResponse.goals || [];
+                } catch (error) {
+                    console.warn('Could not load goals for achievements:', error);
+                }
             }
 
             // Update achievements using module (with fallback)
@@ -274,6 +351,13 @@ class ProfileManager {
                 this.updateSidebarInfo(profile);
             } catch (sidebarError) {
                 console.error('Error updating sidebar:', sidebarError);
+            }
+
+            // Load connection count
+            try {
+                await this.loadConnectionCount();
+            } catch (connError) {
+                console.warn('Could not load connection count:', connError);
             }
 
             // Update settings (optional, might not exist)
@@ -416,19 +500,20 @@ class ProfileManager {
 
         const percentage = Math.min(score, maxScore);
 
-        this.updateElement('profileCompletion', `${percentage}%`);
-
         // Update circular completion visual
         if (this.completionVisual) {
             this.completionVisual.update(percentage);
             const tips = this.getCompletionTips(percentage);
             this.completionVisual.updateTips(tips);
         } else {
-            // Fallback to old method
+            // Fallback to old method - use correct element ID
             this.updateElement('completionPercentage', `${percentage}%`);
             const fillElement = document.getElementById('completionFill');
             if (fillElement) {
-                fillElement.style.width = `${percentage}%`;
+                // Calculate stroke-dashoffset for circular progress
+                const circumference = 2 * Math.PI * 54; // radius is 54
+                const offset = circumference - (percentage / 100) * circumference;
+                fillElement.style.strokeDashoffset = offset;
             }
             this.updateCompletionTips(percentage);
         }
@@ -513,6 +598,25 @@ class ProfileManager {
 
         const heightInMeters = height / 100;
         return weight / (heightInMeters * heightInMeters);
+    }
+
+    async loadConnectionCount() {
+        try {
+            // For now, only show connection count for own profile
+            // For other users, we'd need a different API endpoint
+            if (this.isViewingOtherUser) {
+                // Don't show connection count for other users (or show placeholder)
+                this.updateElement('connectionCount', '-');
+                return;
+            }
+
+            const response = await api.connections.getConnections('accepted');
+            const connections = response.data?.connections || response.connections || [];
+            this.updateElement('connectionCount', connections.length);
+        } catch (error) {
+            console.warn('Failed to load connection count:', error);
+            this.updateElement('connectionCount', '0');
+        }
     }
 
     formatMemberSince(dateString) {
@@ -685,6 +789,11 @@ class ProfileManager {
         // Initialize completion score (no tabs in new design)
         this.calculateCompletionScore();
 
+        // Hide edit buttons if viewing another user's profile
+        if (this.isViewingOtherUser) {
+            this.hideEditButtons();
+        }
+
         // Close modal when clicking outside
         const editModal = document.getElementById('editModal');
         const avatarModal = document.getElementById('avatarModal');
@@ -704,6 +813,36 @@ class ProfileManager {
                 }
             });
         }
+    }
+
+    hideEditButtons() {
+        // Hide edit profile button
+        const editBtn = document.getElementById('editBtn');
+        if (editBtn) {
+            editBtn.style.display = 'none';
+        }
+
+        // Hide all inline edit buttons
+        document.querySelectorAll('.btn-edit-inline').forEach(btn => {
+            btn.style.display = 'none';
+        });
+
+        // Hide avatar upload button
+        const openAvatarUploadBtn = document.getElementById('openAvatarUploadBtn');
+        if (openAvatarUploadBtn) {
+            openAvatarUploadBtn.style.display = 'none';
+        }
+
+        // Hide cover photo edit button
+        const editCoverBtn = document.getElementById('editCoverBtn');
+        if (editCoverBtn) {
+            editCoverBtn.style.display = 'none';
+        }
+
+        // Hide "Add skills" and similar action buttons
+        document.querySelectorAll('.btn-link[data-section]').forEach(btn => {
+            btn.style.display = 'none';
+        });
     }
 
     // ===== Tab Management =====

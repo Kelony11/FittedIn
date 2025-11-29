@@ -18,7 +18,37 @@
                 </a>
             </div>
             <div class="nav-links">
+                <a href="goals.html">Goals</a>
+                <a href="connections.html">Connections</a>
                 <a href="profile.html" id="userProfile">Profile</a>
+                <!-- Notification Bell -->
+                <div class="notification-wrapper">
+                    <button class="notification-bell" id="notificationBell" title="Notifications">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    </button>
+                    <!-- Notification Dropdown -->
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-dropdown-header">
+                            <h3>Notifications</h3>
+                            <button class="notification-mark-all" id="markAllReadBtn">Mark all read</button>
+                        </div>
+                        <div class="notification-dropdown-body">
+                            <div class="notification-empty-state" id="notificationEmptyState" style="display: none;">
+                                <p>No notifications yet</p>
+                            </div>
+                            <div class="notification-list" id="notificationList"></div>
+                        </div>
+                        <div class="notification-dropdown-footer">
+                            <a href="#" class="notification-view-all" id="viewAllNotificationsBtn">View all
+                                notifications</a>
+                        </div>
+                    </div>
+                </div>
                 <a href="#" id="logoutLink">Logout</a>
             </div>
         </div>
@@ -144,20 +174,21 @@
                             </div>
                         </form>
                     </div>
+
+                    <!-- Activity Feed (Posts) - Now below the post creation form -->
+                    <div class="community-card">
+                        <div class="community-card-header">
+                            <h3>Activity Feed</h3>
+                        </div>
+                        <div class="activity-feed" id="activityFeed">
+                            <div class="loading-state">Loading...</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Column: Community Section -->
                 <div class="dashboard-right">
                     <div class="community-section">
-                        <!-- Activity Feed -->
-                        <div class="community-card">
-                            <div class="community-card-header">
-                                <h3>Activity Feed</h3>
-                            </div>
-                            <div class="activity-feed" id="activityFeed">
-                                <div class="loading-state">Loading...</div>
-                            </div>
-                        </div>
 
                         <!-- Connection Suggestions -->
                         <div class="community-card">
@@ -200,19 +231,20 @@
         }
 
         .stat-card {
-            background: white;
-            border-radius: 12px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
             padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
             display: flex;
             align-items: center;
             gap: 1rem;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
         }
 
         .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--shadow-md);
+            border-color: var(--border-medium);
         }
 
         .stat-icon {
@@ -227,13 +259,13 @@
         .stat-value {
             font-size: 2rem;
             font-weight: bold;
-            color: var(--primary-color, #4CAF50);
+            color: var(--primary-color);
             line-height: 1;
         }
 
         .stat-label {
             font-size: 0.875rem;
-            color: #666;
+            color: var(--text-light);
             margin-top: 0.25rem;
         }
 
@@ -241,22 +273,23 @@
         .goals-preview {
             margin: 1rem 0;
             padding: 0.75rem;
-            background: #f8f9fa;
-            border-radius: 8px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
         }
 
         .preview-item {
             margin: 0.5rem 0;
             font-size: 0.9rem;
-            color: #555;
+            color: var(--text-medium);
         }
 
         .recent-activity {
             margin-top: 2rem;
-            background: white;
+            background: var(--bg-primary);
             padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
         }
 
         .recent-activity h3 {
@@ -272,8 +305,8 @@
             padding: 0.75rem;
             border-left: 3px solid var(--primary-color);
             margin-bottom: 0.5rem;
-            background: #f8f9fa;
-            border-radius: 4px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
         }
 
         /* Responsive adjustments for dashboard layout */
@@ -284,9 +317,11 @@
         }
     </style>
 
+    <script src="js/utils.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/posts.js"></script>
+    <script src="js/notifications.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
 

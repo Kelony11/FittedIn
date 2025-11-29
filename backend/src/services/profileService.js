@@ -97,11 +97,21 @@ class ProfileService {
                 throw new AppError('User not found', 404);
             }
 
-            // Get user's profile
-            const profile = await Profile.findOne({ where: { user_id: userId } });
+            // Get user's profile, create default if it doesn't exist
+            let profile = await Profile.findOne({ where: { user_id: userId } });
 
             if (!profile) {
-                throw new AppError('Profile not found', 404);
+                // Create default profile if it doesn't exist (similar to getProfile)
+                logger.debug('Profile not found, creating default profile', { userId });
+                profile = await Profile.create({
+                    user_id: userId,
+                    privacy_settings: {
+                        profile_visibility: 'public',
+                        show_activity: true,
+                        show_goals: true,
+                        show_connections: true
+                    }
+                });
             }
 
             // Check privacy settings
@@ -112,7 +122,7 @@ class ProfileService {
                 throw new AppError('Profile is private', 403);
             }
 
-            // Return public profile data
+            // Return public profile data (include all fields that should be visible)
             return {
                 id: profile.id,
                 user_id: profile.user_id,
@@ -121,11 +131,16 @@ class ProfileService {
                 location: profile.location,
                 fitness_level: profile.fitness_level,
                 primary_goals: profile.primary_goals,
+                skills: profile.skills || [],
+                height: profile.height,
+                weight: profile.weight,
+                date_of_birth: profile.date_of_birth,
                 created_at: profile.created_at,
                 updated_at: profile.updated_at,
                 user: {
                     id: user.id,
                     display_name: user.display_name,
+                    email: user.email,
                     avatar_url: user.avatar_url
                 }
             };

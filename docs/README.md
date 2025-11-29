@@ -45,6 +45,11 @@ docs/
   - Database operations
   - Troubleshooting
 
+- [**Database Seeding**](../backend/scripts/SEEDING_README.md) - Generate fake data with Faker.js
+  - Seeding script usage
+  - Configuration options
+  - Generated data details
+
 ---
 
 ## 🎨 Features
@@ -55,6 +60,7 @@ docs/
 - [**Profile System**](features/PROFILE_DEMO.md) - User profile management system
 - [**Authentication**](features/AUTH_FIX_SUMMARY.md) - Authentication system documentation
 - [**UI Beautification**](features/BEAUTIFICATION_REPORT.md) - UI improvements and styling
+- [**Auto-Accept Connections**](features/AUTO_ACCEPT_CONNECTIONS.md) - Automatic connection acceptance for seeded users
 
 ---
 

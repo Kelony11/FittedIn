@@ -158,9 +158,27 @@ router.post('/', authenticateToken, [
         });
     } catch (error) {
         console.error('Create goal error:', error);
+        
+        // Handle Sequelize validation errors
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.map(e => ({
+                param: e.path,
+                msg: e.message,
+                field: e.path,
+                message: e.message
+            }));
+            
+            return res.status(400).json({
+                success: false,
+                message: 'Validation failed',
+                errors: errors
+            });
+        }
+        
+        // Handle other errors
         res.status(500).json({
             success: false,
-            message: 'Failed to create goal'
+            message: error.message || 'Failed to create goal'
         });
     }
 });
@@ -253,9 +271,27 @@ router.put('/:id', authenticateToken, [
         });
     } catch (error) {
         console.error('Update goal error:', error);
+        
+        // Handle Sequelize validation errors
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.map(e => ({
+                param: e.path,
+                msg: e.message,
+                field: e.path,
+                message: e.message
+            }));
+            
+            return res.status(400).json({
+                success: false,
+                message: 'Validation failed',
+                errors: errors
+            });
+        }
+        
+        // Handle other errors
         res.status(500).json({
             success: false,
-            message: 'Failed to update goal'
+            message: error.message || 'Failed to update goal'
         });
     }
 });
@@ -375,9 +411,27 @@ router.patch('/:id/progress', authenticateToken, [
         });
     } catch (error) {
         console.error('Update goal progress error:', error);
+        
+        // Handle Sequelize validation errors
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.map(e => ({
+                param: e.path,
+                msg: e.message,
+                field: e.path,
+                message: e.message
+            }));
+            
+            return res.status(400).json({
+                success: false,
+                message: 'Validation failed',
+                errors: errors
+            });
+        }
+        
+        // Handle other errors
         res.status(500).json({
             success: false,
-            message: 'Failed to update goal progress'
+            message: error.message || 'Failed to update goal progress'
         });
     }
 });

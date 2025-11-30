@@ -391,7 +391,21 @@ async function saveProgress() {
         alert('Progress updated successfully!');
     } catch (error) {
         console.error('Failed to update progress:', error);
-        alert('Failed to update progress. Please try again.');
+        
+        // Display validation errors if available
+        let errorMessage = 'Failed to update progress. ';
+        if (error.validationErrors && Array.isArray(error.validationErrors)) {
+            const validationMessages = error.validationErrors.map(err => {
+                const field = err.param || err.field || 'field';
+                const msg = err.msg || err.message || 'Invalid value';
+                return `${field}: ${msg}`;
+            }).join('\n');
+            errorMessage += '\n\nValidation errors:\n' + validationMessages;
+        } else {
+            errorMessage += (error.message || 'Please try again.');
+        }
+        
+        alert(errorMessage);
     }
 }
 

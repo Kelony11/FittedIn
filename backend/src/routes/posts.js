@@ -117,6 +117,17 @@ router.post('/:id/comment',
     postController.commentOnPost
 );
 
+// Get comments for a post
+router.get('/:id/comments',
+    [
+        param('id').isInt({ min: 1 }),
+        query('limit').optional().isInt({ min: 1, max: 100 }),
+        query('offset').optional().isInt({ min: 0 })
+    ],
+    validate,
+    postController.getPostComments
+);
+
 // Delete a comment
 router.delete('/comments/:id',
     [

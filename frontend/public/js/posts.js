@@ -109,6 +109,36 @@ function getTimeAgo(dateString) {
     return new Date(dateString).toLocaleDateString();
 }
 
+// Render a single comment
+function renderComment(comment, currentUserId) {
+    const commentUserId = comment.user?.id || comment.user_id;
+    const commentUserName = comment.user?.display_name || 'Unknown User';
+    const commentUserAvatar = comment.user?.avatar_url ? '' : (comment.user?.display_name?.slice(0, 2).toUpperCase() || 'U');
+    const commentTimeAgo = getTimeAgo(comment.created_at);
+    const isOwnComment = currentUserId && parseInt(currentUserId) === parseInt(commentUserId);
+
+    return `
+        <div class="post-comment" data-comment-id="${comment.id}">
+            <div class="post-comment-avatar">${commentUserAvatar}</div>
+            <div class="post-comment-content">
+                <div class="post-comment-header">
+                    <a href="profile.html?userId=${commentUserId}" class="post-comment-author">${escapeHtml(commentUserName)}</a>
+                    <span class="post-comment-time">${commentTimeAgo}</span>
+                </div>
+                <div class="post-comment-text">${escapeHtml(comment.content).replace(/\n/g, '<br>')}</div>
+            </div>
+            ${isOwnComment ? `
+                <button class="post-comment-delete" data-action="delete-comment" data-comment-id="${comment.id}" title="Delete comment">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </button>
+            ` : ''}
+        </div>
+    `;
+}
+
 // Render a single post (Facebook-style)
 function renderPost(post) {
     const isPost = post.postType || post.content;
@@ -117,6 +147,9 @@ function renderPost(post) {
     const userName = post.userName || 'Unknown User';
     const userAvatar = post.userAvatar || userName?.slice(0, 2).toUpperCase() || 'U';
     const timeAgo = post.timeAgo || getTimeAgo(post.createdAt);
+    const currentUserId = authState.getUserId();
+    const comments = Array.isArray(post.comments) ? post.comments : [];
+    const showComments = isPost; // Only show comments for posts, not activities
 
     return `
         <div class="post-card ${isPost ? 'post-item' : 'activity-item'}" data-id="${post.id}" data-type="${isPost ? 'post' : 'activity'}" data-user-id="${userId}">
@@ -165,12 +198,12 @@ function renderPost(post) {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"></path>
                         </svg>
-                        <span>${post.likes}</span>
+                        <span class="like-count">${post.likes}</span>
                     </div>
                 ` : ''}
-                ${(post.comments || 0) > 0 ? `
+                ${(post.commentCount || post.comments?.length || 0) > 0 ? `
                     <div class="post-stat-item">
-                        <span>${post.comments} comment${post.comments !== 1 ? 's' : ''}</span>
+                        <span class="comment-count">${post.commentCount || post.comments?.length || 0} comment${(post.commentCount || post.comments?.length || 0) !== 1 ? 's' : ''}</span>
                     </div>
                 ` : ''}
             </div>
@@ -200,6 +233,27 @@ function renderPost(post) {
                     </button>
                 ` : ''}
             </div>
+            ${showComments ? `
+                <div class="post-comments-section" data-post-id="${post.id}">
+                    ${comments.length > 0 ? `
+                        <div class="post-comments-list">
+                            ${comments.map(comment => renderComment(comment, currentUserId)).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="post-comment-input-wrapper">
+                        <div class="post-comment-avatar-input">${getCurrentUserInfo().userAvatar}</div>
+                        <form class="post-comment-form" data-post-id="${post.id}">
+                            <input type="text" class="post-comment-input" placeholder="Write a comment..." maxlength="1000" />
+                            <button type="submit" class="post-comment-submit" title="Post comment">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            ` : ''}
         </div>
     `;
 }
@@ -247,7 +301,7 @@ function attachPostEventListeners() {
         });
     });
 
-    // Comment button handlers (UI only for now)
+    // Comment button handlers
     activityFeed.querySelectorAll('[data-action="comment"]').forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
@@ -275,6 +329,12 @@ function attachPostEventListeners() {
             }
         });
     });
+
+    // Attach comment form handlers for existing comment sections
+    activityFeed.querySelectorAll('.post-comments-section').forEach(section => {
+        attachCommentFormHandler(section);
+        attachCommentDeleteHandlers(section);
+    });
 }
 
 // Handle like action
@@ -292,50 +352,329 @@ async function handleLikePost(postId, buttonElement) {
         if (post) {
             post.isLiked = !post.isLiked;
             post.likes = post.isLiked ? (post.likes || 0) + 1 : Math.max(0, (post.likes || 0) - 1);
-            const likeCount = buttonElement.querySelector('.like-count');
+            const likeCount = buttonElement.closest('.post-card').querySelector('.like-count');
             if (likeCount) likeCount.textContent = post.likes;
-            if (post.isLiked) {
-                buttonElement.classList.add('liked');
-                buttonElement.querySelector('svg').setAttribute('fill', 'currentColor');
-            } else {
-                buttonElement.classList.remove('liked');
-                buttonElement.querySelector('svg').setAttribute('fill', 'none');
+            const svgElement = buttonElement.querySelector('svg');
+            if (svgElement) {
+                if (post.isLiked) {
+                    buttonElement.classList.add('liked');
+                    svgElement.setAttribute('fill', 'currentColor');
+                } else {
+                    buttonElement.classList.remove('liked');
+                    svgElement.setAttribute('fill', 'none');
+                }
             }
         }
         return;
     }
 
     // Handle real API post likes
+    // Prevent multiple simultaneous requests
+    if (buttonElement.disabled) return;
+
     try {
         const isLiked = buttonElement.classList.contains('liked');
+        const postCard = buttonElement.closest('.post-card');
+        if (!postCard) return;
 
+        const likeCountElement = postCard.querySelector('.like-count');
+        const svgElement = buttonElement.querySelector('svg');
+        if (!svgElement) return;
+
+        // Parse current like count from text
+        const currentLikeCount = likeCountElement ? (parseInt(likeCountElement.textContent.trim()) || 0) : 0;
+
+        // Disable button during request
+        buttonElement.disabled = true;
+
+        // Optimistic update
         if (isLiked) {
+            buttonElement.classList.remove('liked');
+            svgElement.setAttribute('fill', 'none');
+            if (likeCountElement) {
+                likeCountElement.textContent = Math.max(0, currentLikeCount - 1);
+            }
             await api.posts.unlike(postId);
         } else {
+            buttonElement.classList.add('liked');
+            svgElement.setAttribute('fill', 'currentColor');
+            if (likeCountElement) {
+                likeCountElement.textContent = currentLikeCount + 1;
+            }
             await api.posts.like(postId);
         }
 
-        // Refresh the feed to get updated like count
+        // Refresh the feed to get accurate counts
         await refreshPostsFeed();
     } catch (error) {
         console.error('Failed to like/unlike post:', error);
-        // Error will be shown by API client toast
+        // Revert optimistic update on error
+        await refreshPostsFeed();
+    } finally {
+        buttonElement.disabled = false;
     }
 }
 
-// Handle comment action (UI only)
+// Handle comment action - toggle comment section
 function handleCommentPost(postId, buttonElement) {
-    // Visual feedback
-    const originalText = buttonElement.querySelector('span')?.textContent || '0';
-    buttonElement.disabled = true;
-    buttonElement.style.opacity = '0.6';
+    const postCard = buttonElement.closest('.post-card');
+    if (!postCard) return;
 
-    setTimeout(() => {
-        buttonElement.disabled = false;
-        buttonElement.style.opacity = '1';
-        // Future: open comment modal/dialog
-        console.log('Comment on post:', postId);
-    }, 300);
+    const commentsSection = postCard.querySelector('.post-comments-section');
+    if (!commentsSection) {
+        // If comments section doesn't exist, load comments and show it
+        loadAndShowComments(postId, postCard);
+        return;
+    }
+
+    // Toggle visibility
+    const isVisible = commentsSection.style.display !== 'none';
+    commentsSection.style.display = isVisible ? 'none' : 'block';
+
+    // If showing, ensure comments are loaded
+    if (!isVisible) {
+        const commentsList = commentsSection.querySelector('.post-comments-list');
+        if (!commentsList || commentsList.children.length === 0) {
+            loadCommentsForPost(postId, commentsSection);
+        }
+    }
+}
+
+// Load comments for a post
+async function loadCommentsForPost(postId, commentsSection) {
+    // Check if it's a real post ID
+    if (postId.toString().startsWith('activity-') || postId.toString().startsWith('mock-') || postId.toString().startsWith('user-post-')) {
+        return; // No comments for mock/activity posts
+    }
+
+    try {
+        const response = await api.posts.getComments(postId, { limit: 50 });
+        const comments = response.data?.comments || response.comments || [];
+        const currentUserId = authState.getUserId();
+
+        let commentsList = commentsSection.querySelector('.post-comments-list');
+        if (!commentsList) {
+            commentsList = document.createElement('div');
+            commentsList.className = 'post-comments-list';
+            const commentInputWrapper = commentsSection.querySelector('.post-comment-input-wrapper');
+            if (commentInputWrapper) {
+                commentsSection.insertBefore(commentsList, commentInputWrapper);
+            } else {
+                commentsSection.appendChild(commentsList);
+            }
+        }
+
+        commentsList.innerHTML = comments.map(comment => renderComment(comment, currentUserId)).join('');
+
+        // Attach delete handlers
+        attachCommentDeleteHandlers(commentsSection);
+    } catch (error) {
+        console.error('Failed to load comments:', error);
+        // Show error message to user
+        if (window.toast) {
+            window.toast.error('Failed to load comments');
+        }
+    }
+}
+
+// Load and show comments section
+async function loadAndShowComments(postId, postCard) {
+    // Create comments section
+    const commentsSection = document.createElement('div');
+    commentsSection.className = 'post-comments-section';
+    commentsSection.setAttribute('data-post-id', postId);
+    commentsSection.innerHTML = `
+        <div class="post-comments-list"></div>
+        <div class="post-comment-input-wrapper">
+            <div class="post-comment-avatar-input">${getCurrentUserInfo().userAvatar}</div>
+            <form class="post-comment-form" data-post-id="${postId}">
+                <input type="text" class="post-comment-input" placeholder="Write a comment..." maxlength="1000" />
+                <button type="submit" class="post-comment-submit" title="Post comment">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    `;
+
+    // Insert after post actions
+    const postActions = postCard.querySelector('.post-actions');
+    if (postActions) {
+        postActions.parentNode.insertBefore(commentsSection, postActions.nextSibling);
+    } else {
+        postCard.appendChild(commentsSection);
+    }
+
+    // Load comments
+    await loadCommentsForPost(postId, commentsSection);
+
+    // Attach comment form handler
+    attachCommentFormHandler(commentsSection);
+}
+
+// Attach comment form handlers
+function attachCommentFormHandler(commentsSection) {
+    const form = commentsSection.querySelector('.post-comment-form');
+    if (!form) return;
+
+    // Remove existing listener to prevent duplicates
+    const newForm = form.cloneNode(true);
+    form.parentNode.replaceChild(newForm, form);
+
+    newForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const postId = this.dataset.postId;
+        const input = this.querySelector('.post-comment-input');
+        const content = input.value.trim();
+
+        if (!content || content.length === 0) {
+            return;
+        }
+
+        if (content.length > 1000) {
+            if (window.toast) {
+                window.toast.error('Comment cannot exceed 1000 characters');
+            }
+            return;
+        }
+
+        // Disable form during submission
+        const submitBtn = this.querySelector('.post-comment-submit');
+        if (!submitBtn) return;
+        submitBtn.disabled = true;
+
+        try {
+            // Check if it's a real post ID
+            if (postId.toString().startsWith('activity-') || postId.toString().startsWith('mock-') || postId.toString().startsWith('user-post-')) {
+                if (window.toast) {
+                    window.toast.info('Comments are only available for posts');
+                }
+                submitBtn.disabled = false;
+                return;
+            }
+
+            const response = await api.posts.comment(postId, { content });
+            const comment = response.data?.comment || response.comment;
+
+            if (comment) {
+                // Add comment to list
+                let commentsList = commentsSection.querySelector('.post-comments-list');
+                if (!commentsList) {
+                    const newCommentsList = document.createElement('div');
+                    newCommentsList.className = 'post-comments-list';
+                    const inputWrapper = commentsSection.querySelector('.post-comment-input-wrapper');
+                    commentsSection.insertBefore(newCommentsList, inputWrapper);
+                    commentsList = newCommentsList;
+                }
+
+                const currentUserId = authState.getUserId();
+                const commentHtml = renderComment(comment, currentUserId);
+                commentsList.insertAdjacentHTML('beforeend', commentHtml);
+
+                // Update comment count
+                const postCard = commentsSection.closest('.post-card');
+                if (postCard) {
+                    const commentCountElement = postCard.querySelector('.comment-count');
+                    if (commentCountElement) {
+                        // Parse count from text like "5 comments" or "1 comment"
+                        const text = commentCountElement.textContent.trim();
+                        const match = text.match(/(\d+)/);
+                        const currentCount = match ? parseInt(match[1]) : 0;
+                        const newCount = currentCount + 1;
+                        commentCountElement.textContent = `${newCount} comment${newCount !== 1 ? 's' : ''}`;
+                    } else {
+                        // Create comment count element if it doesn't exist
+                        const postStats = postCard.querySelector('.post-stats');
+                        if (postStats) {
+                            const statItem = document.createElement('div');
+                            statItem.className = 'post-stat-item';
+                            statItem.innerHTML = `<span class="comment-count">1 comment</span>`;
+                            postStats.appendChild(statItem);
+                        }
+                    }
+                }
+
+                // Clear input
+                input.value = '';
+
+                // Attach delete handler to new comment
+                attachCommentDeleteHandlers(commentsSection);
+
+                // Show success feedback
+                if (window.toast) {
+                    window.toast.success('Comment added!');
+                }
+            }
+        } catch (error) {
+            console.error('Failed to add comment:', error);
+            // Error will be shown by API client toast
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
+}
+
+// Attach delete handlers for comments
+function attachCommentDeleteHandlers(commentsSection) {
+    // Remove existing listeners by cloning elements
+    const deleteButtons = commentsSection.querySelectorAll('[data-action="delete-comment"]');
+    deleteButtons.forEach(btn => {
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+    });
+
+    // Attach new listeners
+    commentsSection.querySelectorAll('[data-action="delete-comment"]').forEach(btn => {
+        btn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            const commentId = this.dataset.commentId;
+            const commentElement = this.closest('.post-comment');
+
+            if (!confirm('Are you sure you want to delete this comment?')) {
+                return;
+            }
+
+            try {
+                await api.posts.deleteComment(commentId);
+
+                // Remove comment from DOM
+                commentElement.remove();
+
+                // Update comment count
+                const postCard = commentsSection.closest('.post-card');
+                if (postCard) {
+                    const commentCountElement = postCard.querySelector('.comment-count');
+                    if (commentCountElement) {
+                        // Parse count from text like "5 comments" or "1 comment"
+                        const text = commentCountElement.textContent.trim();
+                        const match = text.match(/(\d+)/);
+                        const currentCount = match ? parseInt(match[1]) : 0;
+                        const newCount = Math.max(0, currentCount - 1);
+                        if (newCount === 0) {
+                            commentCountElement.textContent = '';
+                        } else {
+                            commentCountElement.textContent = `${newCount} comment${newCount !== 1 ? 's' : ''}`;
+                        }
+                    }
+                }
+
+                // Remove comments list if empty
+                const commentsList = commentsSection.querySelector('.post-comments-list');
+                if (commentsList && commentsList.children.length === 0) {
+                    commentsList.remove();
+                }
+
+                if (window.toast) {
+                    window.toast.success('Comment deleted');
+                }
+            } catch (error) {
+                console.error('Failed to delete comment:', error);
+                // Error will be shown by API client toast
+            }
+        });
+    });
 }
 
 // Handle share action (UI only)
@@ -535,10 +874,12 @@ async function refreshPostsFeed() {
             content: post.content,
             postType: 'text',
             likes: post.like_count || 0,
-            comments: post.comment_count || 0,
+            commentCount: post.comment_count || 0,
             isLiked: post.is_liked || false,
             createdAt: post.created_at,
-            timeAgo: getTimeAgo(post.created_at)
+            timeAgo: getTimeAgo(post.created_at),
+            // Include comments if available (limited to 5 in feed)
+            comments: post.comments || []
         }));
 
         // Try to get activities from API

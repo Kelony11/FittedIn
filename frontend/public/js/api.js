@@ -319,6 +319,13 @@ const api = {
         comment: (postId, commentData) => api.request(`/posts/${postId}/comment`, {
             method: 'POST',
             body: JSON.stringify(commentData)
+        }),
+        getComments: (postId, params = {}) => {
+            const queryString = new URLSearchParams(params).toString();
+            return api.request(`/posts/${postId}/comments${queryString ? '?' + queryString : ''}`);
+        },
+        deleteComment: (commentId) => api.request(`/posts/comments/${commentId}`, {
+            method: 'DELETE'
         })
     }
 };

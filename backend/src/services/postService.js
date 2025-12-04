@@ -450,6 +450,41 @@ class PostService {
     }
 
     /**
+     * Get comments for a post
+     */
+    async getPostComments(postId, options = {}) {
+        try {
+            const {
+                limit = 50,
+                offset = 0
+            } = options;
+
+            // Check if post exists
+            const post = await Post.findByPk(postId);
+            if (!post) {
+                throw new AppError('Post not found', 404);
+            }
+
+            const comments = await PostComment.findAll({
+                where: { post_id: postId },
+                include: [{
+                    model: User,
+                    as: 'user',
+                    attributes: ['id', 'display_name', 'avatar_url']
+                }],
+                order: [['created_at', 'ASC']],
+                limit: parseInt(limit),
+                offset: parseInt(offset)
+            });
+
+            return comments.map(comment => comment.toJSON());
+        } catch (error) {
+            logger.error('Failed to get post comments', error);
+            throw error;
+        }
+    }
+
+    /**
      * Delete a comment
      */
     async deleteComment(commentId, userId) {

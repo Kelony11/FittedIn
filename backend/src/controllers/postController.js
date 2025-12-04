@@ -179,6 +179,26 @@ class PostController {
     });
 
     /**
+     * Get comments for a post
+     * GET /api/posts/:id/comments
+     */
+    getPostComments = asyncHandler(async (req, res) => {
+        const { id } = req.params;
+        const { limit, offset } = req.query;
+
+        const comments = await postService.getPostComments(id, {
+            limit: limit || 50,
+            offset: offset || 0
+        });
+
+        ResponseHandler.success(
+            res,
+            { comments },
+            'Comments retrieved successfully'
+        );
+    });
+
+    /**
      * Delete a comment
      * DELETE /api/posts/comments/:id
      */

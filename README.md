@@ -10,6 +10,10 @@
 
 <div align="center">
   <img src="docs/screenshots/homepage-hero.png" alt="FittedIn Homepage - Transform Your Health Journey" width="900"/>
+  <br/>
+  <a href="https://fittedin.cchung.online/">
+    <strong>🌐 Visit Live Website →</strong>
+  </a>
 </div>
 
 ---

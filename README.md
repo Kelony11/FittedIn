@@ -252,4 +252,16 @@ If you encounter any issues:
 
 ---
 
+## Contributors 👤
+
+- Andrew Chen
+- Haoyang Guo
+- Kelvin Ihezue
+- Carlos Ortiz
+- Pendo Thiirah
+- Dileep Kumar Vadlamudi
+- Alaric Li
+- Yixiao Xiao
+- Adam Ashby
+
 **Happy coding! 🚀**

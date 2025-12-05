@@ -1,7 +1,7 @@
 # FittedIn — Health & Wellness Networking Platform
 
-> **ECE 452 Software Engineering Project** 
-> Semester: Fall 2025
+- **ECE 452 Software Engineering Project** 
+- Semester: Fall 2025
 
 <!-- GitHub Actions workflows are currently disabled - using manual deployment with setup.sh -->
 <!-- [![Test](https://github.com/zhihungchen/FittedIn/actions/workflows/test.yml/badge.svg)](https://github.com/zhihungchen/FittedIn/actions/workflows/test.yml) -->
